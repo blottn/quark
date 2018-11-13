@@ -16,22 +16,18 @@
 #include <assimp/scene.h> // collects data
 #include <assimp/postprocess.h> // various extra operations
 
-// Project includes
-#include "maths_funcs.h"
+#include "lib/maths_funcs.h"
 
 /*----------------------------------------------------------------------------
 MESH TO LOAD
 ----------------------------------------------------------------------------*/
-// this mesh is a dae file format but you should be able to use any other format too, obj is typically what is used
-// put the mesh in your project directory, or provide a filepath for it here
 #define BANANA_MESH_NAME "banana.dae"
 #define MONKEY_MESH_NAME "monkeyhead_smooth.dae"
 /*----------------------------------------------------------------------------
-----------------------------------------------------------------------------*/ 
+----------------------------------------------------------------------------*/
 
 using namespace std;
 
-#pragma region SimpleTypes
 typedef struct
 {
 	size_t mPointCount = 0;
@@ -39,10 +35,8 @@ typedef struct
 	vector<vec3> mNormals;
 	vector<vec2> mTextureCoords;
 } ModelData;
-#pragma endregion SimpleTypes
 
 
-#pragma region MESH LOADING
 /*----------------------------------------------------------------------------
 MESH LOADING FUNCTION
 ----------------------------------------------------------------------------*/
@@ -99,9 +93,6 @@ ModelData load_mesh(const char* file_name) {
 	return modelData;
 }
 
-#pragma endregion MESH LOADING
-
-
 
 const int width = 800;
 const int height = 600;
@@ -136,11 +127,11 @@ public:
 class Ent {
 public:
 	int vao;
-	
+
 	GLuint loc1, loc2, loc3;
-	
+
 	GLuint shaderID;
-	
+
 	ModelData mesh_raw;
 	vector<Ent> * subs;
 	Transform * model;
@@ -232,7 +223,6 @@ public:
 GLfloat rotate_y = 0.0f;
 
 // Shader Functions
-#pragma region SHADER_FUNCTIONS
 char* readShaderSource(const char* shaderFile) {
 	FILE* fp;
 	fopen_s(&fp, shaderFile, "rb");
@@ -333,53 +323,6 @@ GLuint CompileShaders()
 	glUseProgram(shaderProgramID);
 	return shaderProgramID;
 }
-#pragma endregion SHADER_FUNCTIONS
-/*
-// VBO Functions
-#pragma region VBO_FUNCTIONS
-void generateObjectBufferMesh() {
-
-	//Note: you may get an error "vector subscript out of range" if you are using this code for a mesh that doesnt have positions and normals
-	//Might be an idea to do a check for that before generating and binding the buffer.
-
-	mesh_data = load_mesh(MESH_NAME);
-	unsigned int vp_vbo = 0;
-	loc1 = glGetAttribLocation(shaderProgramID, "vertex_position");
-	loc2 = glGetAttribLocation(shaderProgramID, "vertex_normal");
-	loc3 = glGetAttribLocation(shaderProgramID, "vertex_texture");
-
-	glGenBuffers(1, &vp_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vp_vbo);
-	glBufferData(GL_ARRAY_BUFFER, mesh_data.mPointCount * sizeof(vec3), &mesh_data.mVertices[0], GL_STATIC_DRAW);
-	unsigned int vn_vbo = 0;
-	glGenBuffers(1, &vn_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vn_vbo);
-	glBufferData(GL_ARRAY_BUFFER, mesh_data.mPointCount * sizeof(vec3), &mesh_data.mNormals[0], GL_STATIC_DRAW);
-
-	//	This is for texture coordinates which you don't currently need, so I have commented it out
-	//	unsigned int vt_vbo = 0;
-	//	glGenBuffers (1, &vt_vbo);
-	//	glBindBuffer (GL_ARRAY_BUFFER, vt_vbo);
-	//	glBufferData (GL_ARRAY_BUFFER, monkey_head_data.mTextureCoords * sizeof (vec2), &monkey_head_data.mTextureCoords[0], GL_STATIC_DRAW);
-
-	unsigned int vao = 0;
-	glBindVertexArray(vao);
-
-	glEnableVertexAttribArray(loc1);
-	glBindBuffer(GL_ARRAY_BUFFER, vp_vbo);
-	glVertexAttribPointer(loc1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(loc2);
-	glBindBuffer(GL_ARRAY_BUFFER, vn_vbo);
-	glVertexAttribPointer(loc2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	//	This is for texture coordinates which you don't currently need, so I have commented it out
-	//	glEnableVertexAttribArray (loc3);
-	//	glBindBuffer (GL_ARRAY_BUFFER, vt_vbo);
-	//	glVertexAttribPointer (loc3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-}
-#pragma endregion VBO_FUNCTIONS
-
-*/
 
 Ent * root;
 
@@ -393,7 +336,7 @@ void display() {
 	glUseProgram(shaderProgramID);
 
 	root->draw(identity_mat4());
-	
+
 	glutSwapBuffers();
 }
 
@@ -427,7 +370,7 @@ void init()
 	Transform * right = new Transform();
 	right->translate = translate(right->translate, vec3(7.5f, -5.0f, 0.0f));
 	right->rotate = rotate_z_deg(right->rotate, 45);
-	
+
 	Transform * left = new Transform();
 	left->translate = translate(left->translate, vec3(-7.5f, -5.0f, 0.0f));
 	left->rotate = rotate_z_deg(left->rotate, -45);
