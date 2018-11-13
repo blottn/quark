@@ -1,6 +1,4 @@
 // Windows includes (For Time, IO, etc.)
-#include <windows.h>
-#include <mmsystem.h>
 #include <iostream>
 #include <string>
 #include <stdio.h>
@@ -16,13 +14,13 @@
 #include <assimp/scene.h> // collects data
 #include <assimp/postprocess.h> // various extra operations
 
-#include "lib/maths_funcs.h"
+#include "lib/maths_funcs.cpp"
 
 /*----------------------------------------------------------------------------
 MESH TO LOAD
 ----------------------------------------------------------------------------*/
-#define BANANA_MESH_NAME "banana.dae"
-#define MONKEY_MESH_NAME "monkeyhead_smooth.dae"
+#define BANANA_MESH_NAME "models/banana.dae"
+#define MONKEY_MESH_NAME "models/monkeyhead_smooth.dae"
 
 using namespace std;
 
@@ -223,7 +221,7 @@ GLfloat rotate_y = 0.0f;
 // Shader Functions
 char* readShaderSource(const char* shaderFile) {
 	FILE* fp;
-	fopen_s(&fp, shaderFile, "rb");
+	fp = fopen(shaderFile, "rb");
 
 	if (fp == NULL) { return NULL; }
 
@@ -288,8 +286,8 @@ GLuint CompileShaders()
 	}
 
 	// Create two shader objects, one for the vertex, and one for the fragment shader
-	AddShader(shaderProgramID, "simpleVertexShader.txt", GL_VERTEX_SHADER);
-	AddShader(shaderProgramID, "simpleFragmentShader.txt", GL_FRAGMENT_SHADER);
+	AddShader(shaderProgramID, "shaders/simpleVertexShader.txt", GL_VERTEX_SHADER);
+	AddShader(shaderProgramID, "shaders/simpleFragmentShader.txt", GL_FRAGMENT_SHADER);
 
 	GLint Success = 0;
 	GLchar ErrorLog[1024] = { '\0' };
@@ -341,15 +339,8 @@ void display() {
 // periodic function for changing translation amts etc
 void updateScene() {
 
-	static DWORD last_time = 0;
-	DWORD curr_time = timeGetTime();
-	if (last_time == 0)
-		last_time = curr_time;
-	float delta = (curr_time - last_time) * 0.001f;
-	last_time = curr_time;
-
 	// Rotate the model slowly around the y axis at 20 degrees per second
-	rotate_y += 20.0f * delta;
+	rotate_y += 20.0f * 1.1;
 	rotate_y = fmodf(rotate_y, 360.0f);
 
 	// Draw the next frame
