@@ -16,6 +16,8 @@
 #include "lib/data.h"
 #include "lib/maths_funcs.cpp"
 #include "lib/ent.h"
+#include "lib/sky.h"
+
 /*----------------------------------------------------------------------------
 MESH TO LOAD
 ----------------------------------------------------------------------------*/
@@ -23,12 +25,17 @@ MESH TO LOAD
 #define MONKEY_MESH_NAME "models/monkeyhead_smooth.dae"
 
 using namespace std;
+
+// Globals
+
+//hacky
+GLuint texId;
+
+// useful
 const int width = 800;
 const int height = 600;
 
 GLuint shaderProgramID;
-
-GLfloat rotate_y = 0.0f;
 
 // Shader Functions
 char* readShaderSource(const char* shaderFile) {
@@ -98,8 +105,8 @@ GLuint CompileShaders()
 	}
 
 	// Create two shader objects, one for the vertex, and one for the fragment shader
-	AddShader(shaderProgramID, "shaders/simpleVertexShader.txt", GL_VERTEX_SHADER);
-	AddShader(shaderProgramID, "shaders/simpleFragmentShader.txt", GL_FRAGMENT_SHADER);
+	AddShader(shaderProgramID, "shaders/simple_vert.shader", GL_VERTEX_SHADER);
+	AddShader(shaderProgramID, "shaders/simple_frag.shader", GL_FRAGMENT_SHADER);
 
 	GLint Success = 0;
 	GLchar ErrorLog[1024] = { '\0' };
@@ -158,6 +165,17 @@ void updateScene() {
 
 void init()
 {
+
+    vector<string> * sides = new vector<string>();
+    sides->push_back("models/skybox/left.jpg");
+    sides->push_back("models/skybox/right.jpg");
+    sides->push_back("models/skybox/top.jpg");
+    sides->push_back("models/skybox/bottom.jpg");
+    sides->push_back("models/skybox/front.jpg");
+    sides->push_back("models/skybox/back.jpg");
+
+    texId = loadCubemap(*sides);
+
 	// Set up the shaders
 	GLuint shaderProgramID = CompileShaders();
 
@@ -185,7 +203,6 @@ void init()
 	Ent * sub2 = new Ent(banana, shaderProgramID, upright);
 	Ent * sub3 = new Ent(monkey, shaderProgramID, right);
 
-
 	root->addChild(*sub1);
 	root->addChild(*sub2);
 	root->addChild(*sub3);
@@ -201,8 +218,6 @@ void init()
 
 	sub1->addChild(*b1);
 	sub3->addChild(*b2);
-
-
 }
 
 // Placeholder code for the keypress
