@@ -1,9 +1,37 @@
 #include <vector>
 #include "transform.h"
 
+class SkyBox {
+
+public:
+
+    GLuint vao;
+    GLuint shaderID;
+
+    SkyBox(GLuint shader) {
+        shaderID = shader;
+        initData();
+    }
+
+    void initData() {
+        GLuint VAOs[1];
+        glGenVertexArrays(1,VAOs);
+        vao = VAOs[0];
+
+        glBindVertexArray(vao);
+    }
+
+    void draw() {
+        glBindVertexArray(vao);
+		glUseProgram(shaderID);
+
+
+    }
+};
+
 class Ent {
 public:
-	int vao;
+    GLuint vao;
 
 	GLuint shaderID;
 
@@ -20,7 +48,6 @@ public:
 
 		initData();
 		model = initial;
-		//model->rotate = rotate_z_deg(model->rotate, 180);
 	}
 
 	void initData() {
@@ -32,9 +59,9 @@ public:
 
 		// black magic *waves hands*
 		unsigned int vp_vbo = 0;
-		GLuint loc1 = glGetAttribLocation(shaderID, "vertex_position");
-		GLuint loc2 = glGetAttribLocation(shaderID, "vertex_normal");
-		GLuint loc3 = glGetAttribLocation(shaderID, "vertex_texture");
+		GLuint pos = glGetAttribLocation(shaderID, "vertex_position");
+		GLuint norm = glGetAttribLocation(shaderID, "vertex_normal");
+		GLuint tex = glGetAttribLocation(shaderID, "vertex_texture");
 
 		glGenBuffers(1, &vp_vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, vp_vbo);
@@ -44,12 +71,12 @@ public:
 		glBindBuffer(GL_ARRAY_BUFFER, vn_vbo);
 		glBufferData(GL_ARRAY_BUFFER, mesh_raw.mPointCount * sizeof(vec3), &mesh_raw.mNormals[0], GL_STATIC_DRAW);
 
-		glEnableVertexAttribArray(loc1);
+		glEnableVertexAttribArray(pos);
 		glBindBuffer(GL_ARRAY_BUFFER, vp_vbo);
-		glVertexAttribPointer(loc1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-		glEnableVertexAttribArray(loc2);
+		glVertexAttribPointer(pos, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		glEnableVertexAttribArray(norm);
 		glBindBuffer(GL_ARRAY_BUFFER, vn_vbo);
-		glVertexAttribPointer(loc2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		glVertexAttribPointer(norm, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	}
 
@@ -62,7 +89,7 @@ public:
 		glBindVertexArray(vao);
 	}
 
-	void draw(mat4 parent) {
+	void draw(mat4 parent, mat4 view, mat4 projection) {
 		bindVAO();
 		glUseProgram(shaderID);
 
@@ -73,18 +100,18 @@ public:
 
 
 		// Root of the Hierarchy
-		mat4 view = identity_mat4();
+		/*mat4 view = identity_mat4();
 		mat4 persp_proj = perspective(45.0f, (float) glutGet(GLUT_WINDOW_WIDTH)/ (float) glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
 		view = translate(view, vec3(0.0, 0.0, -50.0f));
-
+*/
 		// update uniforms & draw
-		glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, persp_proj.m);
+		glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, projection.m);
 		glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, view.m);
 		glUniformMatrix4fv(matrix_location, 1, GL_FALSE, (parent * model->compute()).m);
 		glDrawArrays(GL_TRIANGLES, 0, mesh_raw.mPointCount);
 
 		for(Ent child : (*subs)) {
-			child.draw(parent * model->compute());
+			child.draw(parent * model->compute(), view, projection);
 		}
 	}
 };

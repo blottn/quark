@@ -1,20 +1,26 @@
 #include <vector>
 #include "maths_funcs.h"
 
-typedef struct
-{
-	size_t mPointCount = 0;
+class ModelData {
+public:
+    size_t mPointCount = 0;
     std::vector<vec3> mVertices;
     std::vector<vec3> mNormals;
     std::vector<vec2> mTextureCoords;
-} ModelData;
+
+    ModelData() {
+        mVertices = * new std::vector<vec3>();
+        mNormals = * new std::vector<vec3>();
+        mTextureCoords = * new std::vector<vec2>();
+    }
+};
 
 /*----------------------------------------------------------------------------
 MESH LOADING FUNCTION
 ----------------------------------------------------------------------------*/
 
 ModelData load_mesh(const char* file_name) {
-	ModelData modelData;
+	ModelData modelData = * new ModelData();
 
 	/* Use assimp to read the model file, forcing it to be read as    */
 	/* triangles. The second flag (aiProcess_PreTransformVertices) is */

@@ -37,6 +37,14 @@ const int height = 600;
 
 GLuint shaderProgramID;
 
+Ent * root;
+SkyBox * sky;
+
+mat4 view = identity_mat4();
+mat4 projection = identity_mat4();
+
+
+
 // Shader Functions
 char* readShaderSource(const char* shaderFile) {
 	FILE* fp;
@@ -92,7 +100,7 @@ static void AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum Shad
 	glAttachShader(ShaderProgram, ShaderObj);
 }
 
-GLuint CompileShaders()
+GLuint CompileShaders(string vertex_file, string fragment_file)
 {
 	//Start the process of setting up our shaders by creating a program ID
 	//Note: we will link all the shaders together into this ID
@@ -105,8 +113,8 @@ GLuint CompileShaders()
 	}
 
 	// Create two shader objects, one for the vertex, and one for the fragment shader
-	AddShader(shaderProgramID, "shaders/simple_vert.shader", GL_VERTEX_SHADER);
-	AddShader(shaderProgramID, "shaders/simple_frag.shader", GL_FRAGMENT_SHADER);
+	AddShader(shaderProgramID, vertex_file.c_str(), GL_VERTEX_SHADER);
+	AddShader(shaderProgramID, fragment_file.c_str(), GL_FRAGMENT_SHADER);
 
 	GLint Success = 0;
 	GLchar ErrorLog[1024] = { '\0' };
@@ -139,8 +147,6 @@ GLuint CompileShaders()
 	return shaderProgramID;
 }
 
-Ent * root;
-
 void display() {
 
 	// tell GL to only draw onto a pixel if the shape is closer to the viewer
@@ -150,16 +156,39 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgramID);
 
-	root->draw(identity_mat4());
+	root->draw(identity_mat4(), view, projection);
 
 	glutSwapBuffers();
 }
 
 // periodic function for changing translation amts etc
 void updateScene() {
-
 	// Draw the next frame
 	glutPostRedisplay();
+}
+
+void initSkybox() {
+
+    GLuint skyShader = CompileShaders("shaders/sky_vert.shader","shaders/sky_frag.shader");
+
+    sky = new SkyBox(skyShader);
+
+    /*
+    ModelData sky_model = new ModelData();
+    sky_model.mPointCount = 24;
+
+    //top
+    sky_model.mVertices
+    //bottom
+
+    //left
+
+    //right
+
+    //front
+
+    //back
+    */
 }
 
 
@@ -177,9 +206,8 @@ void init()
     texId = loadCubemap(*sides);
 
 	// Set up the shaders
-	GLuint shaderProgramID = CompileShaders();
+	GLuint shaderProgramID = CompileShaders("shaders/simple_vert.shader","shaders/simple_frag.shader");
 
-	ModelData banana = load_mesh(BANANA_MESH_NAME);
 	ModelData monkey = load_mesh(MONKEY_MESH_NAME);
 
 	Transform * right = new Transform();
@@ -198,26 +226,15 @@ void init()
 	// root
 	root = new Ent(monkey, shaderProgramID, new Transform());
 
-	// many (3)
 	Ent * sub1 = new Ent(monkey, shaderProgramID, left);
-	Ent * sub2 = new Ent(banana, shaderProgramID, upright);
-	Ent * sub3 = new Ent(monkey, shaderProgramID, right);
 
 	root->addChild(*sub1);
-	root->addChild(*sub2);
-	root->addChild(*sub3);
 
-	Transform * bfix = new Transform();
-	bfix->scale = scale(bfix->scale, vec3(0.5f, 0.5f, 0.5f));
-	bfix->rotate = rotate_x_deg(bfix->rotate, 90);
-	bfix->translate = translate(bfix->translate, vec3(0.0f, -1.5f, 0.0f));
+    // view and projection init
+    projection = perspective(45.0f, (float) glutGet(GLUT_WINDOW_WIDTH)/ (float) glutGet(    GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+    view = translate(view, vec3(0.0, 0.0, -50.0f));
 
-
-	Ent * b1= new Ent(banana, shaderProgramID, bfix);
-	Ent * b2 = new Ent(banana, shaderProgramID, bfix);
-
-	sub1->addChild(*b1);
-	sub3->addChild(*b2);
+    initSkybox();
 }
 
 // Placeholder code for the keypress
