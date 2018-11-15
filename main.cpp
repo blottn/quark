@@ -18,6 +18,9 @@
 #include "lib/ent.h"
 #include "lib/sky.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 /*----------------------------------------------------------------------------
 MESH TO LOAD
 ----------------------------------------------------------------------------*/
@@ -156,7 +159,11 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgramID);
 
-	root->draw(identity_mat4(), view, projection);
+//	root->draw(identity_mat4(), view, projection);
+
+    glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,-1.0f), glm::vec3(0,0,0), glm::vec3(0,1,0));
+    glm::mat4 p = glm::perspective(glm::radians(45.0f),(float)width / (float)height, 0.1f, 100.0f);
+    sky->draw(v,p);
 
 	glutSwapBuffers();
 }
@@ -171,7 +178,18 @@ void initSkybox() {
 
     GLuint skyShader = CompileShaders("shaders/sky_vert.shader","shaders/sky_frag.shader");
 
-    sky = new SkyBox(skyShader);
+    vector<string> * sides = new vector<string>();
+    sides->push_back("models/skybox/left.jpg");
+    sides->push_back("models/skybox/right.jpg");
+    sides->push_back("models/skybox/top.jpg");
+    sides->push_back("models/skybox/bottom.jpg");
+    sides->push_back("models/skybox/front.jpg");
+    sides->push_back("models/skybox/back.jpg");
+
+    texId = loadCubemap(*sides);
+
+
+    sky = new SkyBox(skyShader, texId);
 
     /*
     ModelData sky_model = new ModelData();
@@ -195,17 +213,7 @@ void initSkybox() {
 void init()
 {
 
-    vector<string> * sides = new vector<string>();
-    sides->push_back("models/skybox/left.jpg");
-    sides->push_back("models/skybox/right.jpg");
-    sides->push_back("models/skybox/top.jpg");
-    sides->push_back("models/skybox/bottom.jpg");
-    sides->push_back("models/skybox/front.jpg");
-    sides->push_back("models/skybox/back.jpg");
-
-    texId = loadCubemap(*sides);
-
-	// Set up the shaders
+    // Set up the shaders
 	GLuint shaderProgramID = CompileShaders("shaders/simple_vert.shader","shaders/simple_frag.shader");
 
 	ModelData monkey = load_mesh(MONKEY_MESH_NAME);
