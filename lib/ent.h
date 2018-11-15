@@ -3,6 +3,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "glm/ext.hpp"
 #include "transform.h"
 class SkyBox {
 private:
@@ -160,7 +161,7 @@ public:
 		glBindVertexArray(vao);
 	}
 
-	void draw(mat4 parent, mat4 view, mat4 projection) {
+	void draw(glm::mat4 parent, mat4 view, mat4 projection) {
 		bindVAO();
 		glUseProgram(shaderID);
         glDepthFunc(GL_LESS);
@@ -178,7 +179,8 @@ public:
 		// update uniforms & draw
 		glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, projection.m);
 		glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, view.m);
-		glUniformMatrix4fv(matrix_location, 1, GL_FALSE, (parent * model->compute()).m);
+
+		glUniformMatrix4fv(matrix_location, 1, GL_FALSE, glm::value_ptr((parent * model->compute())));
 		glDrawArrays(GL_TRIANGLES, 0, mesh_raw.mPointCount);
 
 		for(Ent child : (*subs)) {

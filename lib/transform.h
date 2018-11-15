@@ -2,26 +2,26 @@
 
 class Transform {
 public:
-        mat4 scale;
-        mat4 rotate;
-        mat4 translate;
+    glm::mat4 scale;
+    glm::mat4 rotate;
+    glm::mat4 translate;
 
-        Transform() {
-                scale = identity_mat4();
-                rotate = identity_mat4();
-                translate = identity_mat4();
-        }
+    Transform() {
+        scale = glm::mat4(1.0f);
+        rotate = glm::mat4(1.0f);
+        translate = glm::mat4(1.0f);
+    }
 
-        mat4 compute() {
-                return translate * (rotate * scale);
-        }
+    glm::mat4 compute() {
+        return translate * (rotate * scale);
+    }
 
-        Transform * clone() {
-                Transform * clone = new Transform();
-                clone->scale = this->scale;
-                clone->rotate = this->rotate;
-                clone->translate = this->translate;
-                return clone;
-        }
+    Transform * clone() {
+        Transform * clone = new Transform();
+        clone->scale = this->scale;
+        clone->rotate = this->rotate;
+        clone->translate = this->translate;
+        return clone;
+    }
 };
 

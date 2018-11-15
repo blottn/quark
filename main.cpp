@@ -159,7 +159,7 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgramID);
 
-	root->draw(identity_mat4(), view, projection);
+	root->draw(glm::mat4(1.0f), view, projection);
 
     glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,-1.0f), glm::vec3(0,0,0), glm::vec3(0,1,0));
     glm::mat4 p = glm::perspective(glm::radians(45.0f),(float)width / (float)height, 0.1f, 100.0f);
@@ -219,16 +219,12 @@ void init()
 	ModelData monkey = load_mesh(MONKEY_MESH_NAME);
 
 	Transform * right = new Transform();
-	right->translate = translate(right->translate, vec3(7.5f, -5.0f, 0.0f));
-	right->rotate = rotate_z_deg(right->rotate, 45);
+	right->translate = glm::translate(right->translate, glm::vec3(7.5f, -5.0f, 0.0f));
+	right->rotate = glm::rotate(right->rotate, glm::radians(45.0f), glm::vec3(0,0,1));
 
 	Transform * left = new Transform();
-	left->translate = translate(left->translate, vec3(-7.5f, -5.0f, 0.0f));
-	left->rotate = rotate_z_deg(left->rotate, -45);
-
-	Transform * upright = new Transform();
-	upright->rotate = rotate_z_deg(upright->rotate, 90);
-	upright->translate = translate(upright->translate, vec3(0.0f, -7.5f, 0.0f));
+	left->translate = glm::translate(left->translate, glm::vec3(-7.5f, -5.0f, 0.0f));
+	left->rotate = glm::rotate(left->rotate, glm::radians(-45.0f), glm::vec3(0,0,1));
 
 
 	// root
@@ -249,29 +245,29 @@ void init()
 void keypress(unsigned char key, int x, int y) {
 	switch (key) {
 	case 'w':
-		root->model->translate = translate(root->model->translate, vec3(0.0f, 1.0f, 0.0f));
+		root->model->translate = glm::translate(root->model->translate, glm::vec3(0.0f, 1.0f, 0.0f));
 		break;
 	case 's':
-		root->model->translate = translate(root->model->translate, vec3(0.0f, -1.0f, 0.0f));
+		root->model->translate = glm::translate(root->model->translate, glm::vec3(0.0f, -1.0f, 0.0f));
 		break;
 	case 'a':
-		root->model->translate = translate(root->model->translate, vec3(-1.0f, 0.0f, 0.0f));
+		root->model->translate = glm::translate(root->model->translate, glm::vec3(-1.0f, 0.0f, 0.0f));
 		break;
 	case 'd':
-		root->model->translate = translate(root->model->translate, vec3(1.0f, 0.0f, 0.0f));
+		root->model->translate = glm::translate(root->model->translate, glm::vec3(1.0f, 0.0f, 0.0f));
 		break;
 	case 'z':
-		root->model->translate = translate(root->model->translate, vec3(0.0f, 0.0f, -1.0f));
+		root->model->translate = glm::translate(root->model->translate, glm::vec3(0.0f, 0.0f, -1.0f));
 		break;
 	case 'x':
-		root->model->translate = translate(root->model->translate, vec3(0.0f, 0.0f, 1.0f));
+		root->model->translate = glm::translate(root->model->translate, glm::vec3(0.0f, 0.0f, 1.0f));
 		break;
 
 	case 'q':
-		root->model->rotate = rotate_y_deg(root->model->rotate, 5.0f);
+		root->model->rotate = glm::rotate(root->model->rotate, glm::radians(5.0f), glm::vec3(0,1,0));
 		break;
 	case 'e':
-		root->model->rotate = rotate_y_deg(root->model->rotate, -5.0f);
+		root->model->rotate = glm::rotate(root->model->rotate, glm::radians(-5.0f),glm::vec3(0,1,0));
 		break;
 	}
 }
