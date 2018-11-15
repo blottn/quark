@@ -159,7 +159,7 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgramID);
 
-//	root->draw(identity_mat4(), view, projection);
+	root->draw(identity_mat4(), view, projection);
 
     glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,-1.0f), glm::vec3(0,0,0), glm::vec3(0,1,0));
     glm::mat4 p = glm::perspective(glm::radians(45.0f),(float)width / (float)height, 0.1f, 100.0f);
