@@ -1,17 +1,16 @@
 #include <vector>
-#include "maths_funcs.h"
-
+#include <glm/glm.hpp>
 class ModelData {
 public:
     size_t mPointCount = 0;
-    std::vector<vec3> mVertices;
-    std::vector<vec3> mNormals;
-    std::vector<vec2> mTextureCoords;
+    std::vector<glm::vec3> mVertices;
+    std::vector<glm::vec3> mNormals;
+    std::vector<glm::vec2> mTextureCoords;
 
     ModelData() {
-        mVertices = * new std::vector<vec3>();
-        mNormals = * new std::vector<vec3>();
-        mTextureCoords = * new std::vector<vec2>();
+        mVertices = * new std::vector<glm::vec3>();
+        mNormals = * new std::vector<glm::vec3>();
+        mTextureCoords = * new std::vector<glm::vec2>();
     }
 };
 
@@ -48,15 +47,15 @@ ModelData load_mesh(const char* file_name) {
 		for (unsigned int v_i = 0; v_i < mesh->mNumVertices; v_i++) {
 			if (mesh->HasPositions()) {
 				const aiVector3D* vp = &(mesh->mVertices[v_i]);
-				modelData.mVertices.push_back(vec3(vp->x, vp->y, vp->z));
+				modelData.mVertices.push_back(glm::vec3(vp->x, vp->y, vp->z));
 			}
 			if (mesh->HasNormals()) {
 				const aiVector3D* vn = &(mesh->mNormals[v_i]);
-				modelData.mNormals.push_back(vec3(vn->x, vn->y, vn->z));
+				modelData.mNormals.push_back(glm::vec3(vn->x, vn->y, vn->z));
 			}
 			if (mesh->HasTextureCoords(0)) {
 				const aiVector3D* vt = &(mesh->mTextureCoords[0][v_i]);
-				modelData.mTextureCoords.push_back(vec2(vt->x, vt->y));
+				modelData.mTextureCoords.push_back(glm::vec2(vt->x, vt->y));
 			}
 			if (mesh->HasTangentsAndBitangents()) {
 				/* You can extract tangents and bitangents here              */

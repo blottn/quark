@@ -14,7 +14,6 @@
 #include <assimp/postprocess.h> // various extra operations
 
 #include "lib/data.h"
-#include "lib/maths_funcs.cpp"
 #include "lib/ent.h"
 #include "lib/sky.h"
 
@@ -43,8 +42,8 @@ GLuint shaderProgramID;
 Ent * root;
 SkyBox * sky;
 
-mat4 view = identity_mat4();
-mat4 projection = identity_mat4();
+glm::mat4 view = glm::mat4(1.0f);
+glm::mat4 projection = glm::mat4(1.0f);
 
 
 
@@ -235,8 +234,8 @@ void init()
 	root->addChild(*sub1);
 
     // view and projection init
-    projection = perspective(45.0f, (float) glutGet(GLUT_WINDOW_WIDTH)/ (float) glutGet(    GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
-    view = translate(view, vec3(0.0, 0.0, -50.0f));
+    projection = glm::perspective(glm::radians(45.0f), (float) glutGet(GLUT_WINDOW_WIDTH)/ (float) glutGet(    GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+    view = glm::translate(view, glm::vec3(0.0, 0.0, -50.0f));
 
     initSkybox();
 }
