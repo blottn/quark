@@ -19,6 +19,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/ext.hpp>
 
 /*----------------------------------------------------------------------------
 MESH TO LOAD
@@ -42,10 +43,8 @@ GLuint shaderProgramID;
 Ent * root;
 SkyBox * sky;
 
-glm::mat4 view = glm::mat4(1.0f);
+Transform * view = new Transform();
 glm::mat4 projection = glm::mat4(1.0f);
-
-
 
 // Shader Functions
 char* readShaderSource(const char* shaderFile) {
@@ -149,6 +148,15 @@ GLuint CompileShaders(string vertex_file, string fragment_file)
 	return shaderProgramID;
 }
 
+
+void dump_view() {
+    glm::mat4 te = glm::mat4(1.0f);
+    cout << glm::to_string(te) << endl;
+//    cout << glm::to_string(view->compute()) << endl;
+}
+
+int t= 0;
+
 void display() {
 
 	// tell GL to only draw onto a pixel if the shape is closer to the viewer
@@ -158,11 +166,22 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgramID);
 
-	root->draw(glm::mat4(1.0f), view, projection);
 
-    glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,-1.0f), glm::vec3(0,0,0), glm::vec3(0,1,0));
-    glm::mat4 p = glm::perspective(glm::radians(45.0f),(float)width / (float)height, 0.1f, 100.0f);
-    sky->draw(v,p);
+    glm::mat4 temp_v = glm::mat4(1.0f);
+
+    temp_v = glm::rotate(temp_v, glm::radians(65.0f), glm::vec3(1,0,0));
+    temp_v = glm::translate(temp_v, glm::vec3(0,0,-20));
+//    root->draw(glm::mat4(1.0f), temp_v, projection);
+	root->draw(glm::mat4(1.0f), view->compute(), projection);
+
+
+    if (t == 0) {
+        t = 1;
+        dump_view();
+    }
+
+//    sky->draw(temp_v, projection);
+    sky->draw(view->compute(), projection);
 
 	glutSwapBuffers();
 }
@@ -178,8 +197,8 @@ void initSkybox() {
     GLuint skyShader = CompileShaders("shaders/sky_vert.shader","shaders/sky_frag.shader");
 
     vector<string> * sides = new vector<string>();
-    sides->push_back("models/skybox/left.jpg");
     sides->push_back("models/skybox/right.jpg");
+    sides->push_back("models/skybox/left.jpg");
     sides->push_back("models/skybox/top.jpg");
     sides->push_back("models/skybox/bottom.jpg");
     sides->push_back("models/skybox/front.jpg");
@@ -187,25 +206,8 @@ void initSkybox() {
 
     texId = loadCubemap(*sides);
 
-
     sky = new SkyBox(skyShader, texId);
 
-    /*
-    ModelData sky_model = new ModelData();
-    sky_model.mPointCount = 24;
-
-    //top
-    sky_model.mVertices
-    //bottom
-
-    //left
-
-    //right
-
-    //front
-
-    //back
-    */
 }
 
 
@@ -234,8 +236,8 @@ void init()
 	root->addChild(*sub1);
 
     // view and projection init
-    projection = glm::perspective(glm::radians(45.0f), (float) glutGet(GLUT_WINDOW_WIDTH)/ (float) glutGet(    GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
-    view = glm::translate(view, glm::vec3(0.0, 0.0, -50.0f));
+    projection = glm::perspective(glm::radians(90.0f), (float) glutGet(GLUT_WINDOW_WIDTH)/ (float) glutGet(    GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+    view->translate = glm::translate(view->translate, glm::vec3(0.0f, 0.0f, -50.0f));
 
     initSkybox();
 }
@@ -256,18 +258,29 @@ void keypress(unsigned char key, int x, int y) {
 		root->model->translate = glm::translate(root->model->translate, glm::vec3(1.0f, 0.0f, 0.0f));
 		break;
 	case 'z':
-		root->model->translate = glm::translate(root->model->translate, glm::vec3(0.0f, 0.0f, -1.0f));
+		view->translate = glm::translate(view->translate, glm::vec3(0.0f, 0.0f, 1.0f));
 		break;
 	case 'x':
-		root->model->translate = glm::translate(root->model->translate, glm::vec3(0.0f, 0.0f, 1.0f));
+		view->translate = glm::translate(view->translate, glm::vec3(0.0f, 0.0f, -1.0f));
 		break;
 
 	case 'q':
-		root->model->rotate = glm::rotate(root->model->rotate, glm::radians(5.0f), glm::vec3(0,1,0));
+		view->rotate = glm::rotate(view->rotate, glm::radians(5.0f), glm::vec3(0,1,0));
 		break;
 	case 'e':
-		root->model->rotate = glm::rotate(root->model->rotate, glm::radians(-5.0f),glm::vec3(0,1,0));
+		view->rotate = glm::rotate(view->rotate, glm::radians(-5.0f),glm::vec3(0,1,0));
 		break;
+
+	case 'Q':
+		view->rotate = glm::rotate(view->rotate, glm::radians(5.0f), glm::vec3(1,0,0));
+		break;
+	case 'E':
+		view->rotate = glm::rotate(view->rotate, glm::radians(-5.0f),glm::vec3(1,0,0));
+        dump_view();
+		break;
+
+
+
 	}
 }
 

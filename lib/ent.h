@@ -90,7 +90,7 @@ public:
         glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 
 		GLuint view_mat_location = glGetUniformLocation(shaderID, "view");
-		GLuint proj_mat_location = glGetUniformLocation(shaderID, "proj");
+		GLuint proj_mat_location = glGetUniformLocation(shaderID, "projection");
 
         glm::mat4 new_view = glm::mat4(glm::mat3(view));
 

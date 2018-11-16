@@ -13,7 +13,12 @@ public:
     }
 
     glm::mat4 compute() {
-        return translate * (rotate * scale);
+        glm::mat4 out = glm::mat4(1.0f);
+        out = out * scale;
+        out = out * rotate;
+        out = out * translate;
+        return out;
+//        return translate * (rotate * scale);
     }
 
     Transform * clone() {
