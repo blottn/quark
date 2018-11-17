@@ -8,6 +8,10 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/ext.hpp>
+
 // Assimp includes
 #include <assimp/cimport.h> // scene importer
 #include <assimp/scene.h> // collects data
@@ -16,10 +20,8 @@
 #include "lib/data.h"
 #include "lib/ent.h"
 #include "lib/sky.h"
+#include "lib/camera.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/ext.hpp>
 
 /*----------------------------------------------------------------------------
 MESH TO LOAD
@@ -31,9 +33,6 @@ using namespace std;
 
 // Globals
 
-//hacky
-GLuint texId;
-
 // useful
 const int width = 800;
 const int height = 600;
@@ -43,6 +42,9 @@ GLuint shaderProgramID;
 Ent * root;
 SkyBox * sky;
 
+Camera * camera;
+
+//TODO remove in favour of camera
 Transform * view = new Transform();
 glm::mat4 projection = glm::mat4(1.0f);
 
@@ -157,15 +159,9 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgramID);
 
-	root->draw(glm::mat4(1.0f), view->compute(), projection);
+	root->draw(glm::mat4(1.0f), camera->getView()/*view->compute()*/, projection);
 
-
-    if (t == 0) {
-        t = 1;
-        dump_view();
-    }
-
-    sky->draw(view->compute(), projection);
+    sky->draw(camera->getView()/*view->compute()*/, projection);
 
 	glutSwapBuffers();
 }
@@ -188,7 +184,7 @@ void initSkybox() {
     sides->push_back("models/skybox/front.jpg");
     sides->push_back("models/skybox/back.jpg");
 
-    texId = loadCubemap(*sides);
+    int texId = loadCubemap(*sides);
 
     sky = new SkyBox(skyShader, texId);
 
@@ -223,6 +219,13 @@ void init()
     projection = glm::perspective(glm::radians(90.0f), (float) glutGet(GLUT_WINDOW_WIDTH)/ (float) glutGet(    GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
     view->translate = glm::translate(view->translate, glm::vec3(0.0f, 0.0f, -50.0f));
 
+    camera = new Camera(
+            glm::vec3(0,0,50),
+            glm::vec3(0,0,-1),
+            glm::vec3(-1,0,0),
+            glm::vec3(1,0,0),
+            glm::vec3(0,1,0));
+
     initSkybox();
 }
 
@@ -249,10 +252,10 @@ void keypress(unsigned char key, int x, int y) {
 		break;
 
 	case 'q':
-		view->rotate = glm::rotate(view->rotate, glm::radians(5.0f), glm::vec3(0,1,0));
+		view->rotate = glm::rotate(view->rotate, glm::radians(-5.0f), glm::vec3(0,1,0));
 		break;
 	case 'e':
-		view->rotate = glm::rotate(view->rotate, glm::radians(-5.0f),glm::vec3(0,1,0));
+		view->rotate = glm::rotate(view->rotate, glm::radians(5.0f),glm::vec3(0,1,0));
 		break;
 
 	case 'Q':
