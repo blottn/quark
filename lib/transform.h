@@ -18,7 +18,6 @@ public:
         out = out * rotate;
         out = out * translate;
         return out;
-//        return translate * (rotate * scale);
     }
 
     Transform * clone() {

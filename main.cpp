@@ -148,15 +148,6 @@ GLuint CompileShaders(string vertex_file, string fragment_file)
 	return shaderProgramID;
 }
 
-
-void dump_view() {
-    glm::mat4 te = glm::mat4(1.0f);
-    cout << glm::to_string(te) << endl;
-//    cout << glm::to_string(view->compute()) << endl;
-}
-
-int t= 0;
-
 void display() {
 
 	// tell GL to only draw onto a pixel if the shape is closer to the viewer
@@ -166,12 +157,6 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgramID);
 
-
-    glm::mat4 temp_v = glm::mat4(1.0f);
-
-    temp_v = glm::rotate(temp_v, glm::radians(65.0f), glm::vec3(1,0,0));
-    temp_v = glm::translate(temp_v, glm::vec3(0,0,-20));
-//    root->draw(glm::mat4(1.0f), temp_v, projection);
 	root->draw(glm::mat4(1.0f), view->compute(), projection);
 
 
@@ -180,7 +165,6 @@ void display() {
         dump_view();
     }
 
-//    sky->draw(temp_v, projection);
     sky->draw(view->compute(), projection);
 
 	glutSwapBuffers();
@@ -276,7 +260,6 @@ void keypress(unsigned char key, int x, int y) {
 		break;
 	case 'E':
 		view->rotate = glm::rotate(view->rotate, glm::radians(-5.0f),glm::vec3(1,0,0));
-        dump_view();
 		break;
 
 
