@@ -8,9 +8,11 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/ext.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 // Assimp includes
 #include <assimp/cimport.h> // scene importer
@@ -34,8 +36,11 @@ using namespace std;
 // Globals
 
 // useful
-const int width = 800;
-const int height = 600;
+const int width = 1600;
+const int height = 800;
+
+const int middleX = ((float) width ) / 2.0f;
+const int middleY = ((float) height ) / 2.0f;
 
 GLuint shaderProgramID;
 
@@ -159,10 +164,11 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgramID);
 
-	root->draw(glm::mat4(1.0f), camera->getView()/*view->compute()*/, projection);
+	root->draw(glm::mat4(1.0f), camera->getView(), projection);
 
-    sky->draw(camera->getView()/*view->compute()*/, projection);
+    sky->draw(camera->getView(), projection);
 
+    glutWarpPointer(middleX, middleY);
 	glutSwapBuffers();
 }
 
@@ -220,54 +226,42 @@ void init()
     view->translate = glm::translate(view->translate, glm::vec3(0.0f, 0.0f, -50.0f));
 
     camera = new Camera(
-            glm::vec3(0,0,50),
-            glm::vec3(0,0,-1),
-            glm::vec3(-1,0,0),
+            glm::vec3(0,0,-10),
+            glm::vec3(0,0,1),
             glm::vec3(1,0,0),
             glm::vec3(0,1,0));
-
     initSkybox();
 }
 
 // Placeholder code for the keypress
 void keypress(unsigned char key, int x, int y) {
 	switch (key) {
-	case 'w':
-		root->model->translate = glm::translate(root->model->translate, glm::vec3(0.0f, 1.0f, 0.0f));
-		break;
-	case 's':
-		root->model->translate = glm::translate(root->model->translate, glm::vec3(0.0f, -1.0f, 0.0f));
-		break;
-	case 'a':
-		root->model->translate = glm::translate(root->model->translate, glm::vec3(-1.0f, 0.0f, 0.0f));
-		break;
-	case 'd':
-		root->model->translate = glm::translate(root->model->translate, glm::vec3(1.0f, 0.0f, 0.0f));
-		break;
-	case 'z':
-		view->translate = glm::translate(view->translate, glm::vec3(0.0f, 0.0f, 1.0f));
-		break;
-	case 'x':
-		view->translate = glm::translate(view->translate, glm::vec3(0.0f, 0.0f, -1.0f));
-		break;
-
-	case 'q':
-		view->rotate = glm::rotate(view->rotate, glm::radians(-5.0f), glm::vec3(0,1,0));
-		break;
-	case 'e':
-		view->rotate = glm::rotate(view->rotate, glm::radians(5.0f),glm::vec3(0,1,0));
-		break;
-
-	case 'Q':
-		view->rotate = glm::rotate(view->rotate, glm::radians(5.0f), glm::vec3(1,0,0));
-		break;
-	case 'E':
-		view->rotate = glm::rotate(view->rotate, glm::radians(-5.0f),glm::vec3(1,0,0));
-		break;
-
-
-
+    case 'a': //left
+        camera->move(vec3(-1,0,0));
+        break;
+    case 'd':
+        camera->move(vec3(1,0,0));
+        break;
+    case 'r':   //up
+        camera->move(vec3(0,1,0));
+        break;
+    case 'e':
+        camera->move(vec3(0,-1,0));
+        break;
+    case 'w':       //forwards
+        camera->move(vec3(0,0,1));
+        break;
+    case 's':
+        camera->move(vec3(0,0,-1));
+        break;
+    case 'q':   //exit
+        exit(0);
+        break;
 	}
+}
+
+void mouseMove(int x, int y) {
+    camera->look(x - middleX, y-middleY);
 }
 
 int main(int argc, char** argv) {
@@ -280,7 +274,11 @@ int main(int argc, char** argv) {
 	// Tell glut where the display function is
 	glutDisplayFunc(display);
 	glutIdleFunc(updateScene);
-	glutKeyboardFunc(keypress);
+
+    glutKeyboardFunc(keypress);
+    glutPassiveMotionFunc(mouseMove);
+    glutSetCursor(GLUT_CURSOR_NONE);
+
 	// A call to glewInit() must be done after glut is initialized!
 	GLenum res = glewInit();
 	// Check for any errors
@@ -290,6 +288,7 @@ int main(int argc, char** argv) {
 	}
 	// Set up your objects and shaders
 	init();
+
 	// Begin infinite event loop
 	glutMainLoop();
 	return 0;
