@@ -6,7 +6,7 @@
 
 // OpenGL includes
 #include <GL/glew.h>
-#include <GL/freeglut.h>
+#include <GLUT/glut.h>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
@@ -139,17 +139,7 @@ GLuint CompileShaders(string vertex_file, string fragment_file)
 	}
 
 	// program has been successfully linked but needs to be validated to check whether the program can execute given the current pipeline state
-	glValidateProgram(shaderProgramID);
-	// check for program related errors using glGetProgramiv
-	glGetProgramiv(shaderProgramID, GL_VALIDATE_STATUS, &Success);
-	if (!Success) {
-		glGetProgramInfoLog(shaderProgramID, sizeof(ErrorLog), NULL, ErrorLog);
-		std::cerr << "Invalid shader program: " << ErrorLog << std::endl;
-		std::cerr << "Press enter/return to exit..." << std::endl;
-		std::cin.get();
-		exit(1);
-	}
-	// Finally, use the linked shader program
+		// Finally, use the linked shader program
 	// Note: this program will stay in effect for all draw calls until you replace it with another or explicitly disable its use
 	glUseProgram(shaderProgramID);
 	return shaderProgramID;
@@ -163,12 +153,11 @@ void display() {
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgramID);
-
 	root->draw(glm::mat4(1.0f), camera->getView(), projection);
 
     sky->draw(camera->getView(), projection);
 
-    glutWarpPointer(middleX, middleY);
+    //glutWarpPointer(middleX, middleY);
 	glutSwapBuffers();
 }
 
@@ -213,9 +202,9 @@ void init()
 	left->translate = glm::translate(left->translate, glm::vec3(-7.5f, -5.0f, 0.0f));
 	left->rotate = glm::rotate(left->rotate, glm::radians(-45.0f), glm::vec3(0,0,1));
 
-
 	// root
 	root = new Ent(monkey, shaderProgramID, new Transform());
+
 
 	Ent * sub1 = new Ent(monkey, shaderProgramID, left);
 
@@ -267,7 +256,7 @@ void mouseMove(int x, int y) {
 int main(int argc, char** argv) {
 	// Set up the window
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+	glutInitDisplayMode(GLUT_3_2_CORE_PROFILE | GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(width, height);
 	glutCreateWindow("Models");
 
@@ -277,8 +266,9 @@ int main(int argc, char** argv) {
 
     glutKeyboardFunc(keypress);
     glutPassiveMotionFunc(mouseMove);
-    glutSetCursor(GLUT_CURSOR_NONE);
+ //   glutSetCursor(GLUT_CURSOR_NONE);
 
+    glewExperimental = GL_TRUE;
 	// A call to glewInit() must be done after glut is initialized!
 	GLenum res = glewInit();
 	// Check for any errors

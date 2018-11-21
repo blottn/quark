@@ -117,7 +117,6 @@ public:
 		model = new Transform();
 
 		mesh_raw = mesh;
-
 		initData();
 		model = initial;
 	}
