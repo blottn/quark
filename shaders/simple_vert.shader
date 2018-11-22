@@ -25,7 +25,7 @@ void main(){
   // Position in view space
   vec4 eyeCoords = ModelViewMatrix * vec4(vertex_position,1.0);
   //normalised vector towards the light source
- vec3 s = normalize(vec3(LightPosition - eyeCoords));
+  vec3 s = normalize(vec3(LightPosition - eyeCoords));
   
   // The diffuse shading equation, dot product gives us the cosine of angle between the vectors
   LightIntensity = Ld * Kd * max( dot( s, tnorm ), 0.0 );

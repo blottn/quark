@@ -183,3 +183,74 @@ public:
 	}
 };
 
+class Sphere {
+private:
+    GLuint vao;
+
+    float * verts;
+    int vCount;
+
+public:
+    GLuint id;
+    
+    glm::vec3 c; 
+    float r;
+    Transform * transform;
+    Sphere(int shader, glm::vec3 centre, float rad, int crosses, int arms, Transform * transf) {
+        id = shader;
+        c = centre;
+        r = rad;
+        
+        vCount = 9; // to be cross * (2*arms) + 2
+
+        transform = transf;
+        initData();
+    }
+
+    void initData() {
+
+
+        // todo generate corsses and arms
+        float data[9] = {
+            -1,-1,0,
+            1,-1,0,
+            0,1,0
+        };
+
+
+        verts = &data[0];
+
+        GLuint VAOs[1];
+        glGenVertexArrays(1,VAOs);
+        vao = VAOs[0];
+
+        glBindVertexArray(vao);
+
+
+        // generate data
+        GLuint vbo_v;
+
+        glGenBuffers(1, &vbo_v);
+
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_v);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(data) , verts, GL_STATIC_DRAW);
+        GLuint pos = glGetAttribLocation(id,(const GLchar*)("vertex_position"));
+        glEnableVertexAttribArray(pos);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), NULL);
+    }
+    
+    void bindVAO() {
+        glBindVertexArray(vao);
+    }
+    
+    void useShader() {
+        glUseProgram(id);
+    }
+
+    void draw() {
+        bindVAO();
+        useShader();
+        glDepthFunc(GL_LEQUAL);
+        glDrawArrays(GL_TRIANGLES, 0, sizeof(verts));
+    }
+};
