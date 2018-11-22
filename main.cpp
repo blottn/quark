@@ -153,9 +153,10 @@ void display() {
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgramID);
-	root->draw(glm::mat4(1.0f), camera->getView(), projection);
 
     sky->draw(camera->getView(), projection);
+	root->draw(glm::mat4(1.0f), camera->getView(), projection);
+
 
     //glutWarpPointer(middleX, middleY);
 	glutSwapBuffers();
