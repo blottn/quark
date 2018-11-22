@@ -224,6 +224,7 @@ void init()
 
 // Placeholder code for the keypress
 void keypress(unsigned char key, int x, int y) {
+    const int lookspeed = 20;
 	switch (key) {
     case 'a': //left
         camera->move(vec3(-1,0,0));
@@ -243,6 +244,12 @@ void keypress(unsigned char key, int x, int y) {
     case 's':
         camera->move(vec3(0,0,-1));
         break;
+    case 'y':
+        camera->look(-lookspeed,0);
+        break;
+    case 'u':
+        camera->look(lookspeed,0);
+        break;
     case 'q':   //exit
         exit(0);
         break;
@@ -250,7 +257,7 @@ void keypress(unsigned char key, int x, int y) {
 }
 
 void mouseMove(int x, int y) {
-    camera->look(x - middleX, y-middleY);
+    //camera->look(x - middleX, y-middleY);
 }
 
 int main(int argc, char** argv) {
