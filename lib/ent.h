@@ -189,6 +189,7 @@ public:
 class Sphere {
 private:
     GLuint vao;
+    GLuint ebo;
 
     float * verts;
     int vCount;
@@ -218,6 +219,8 @@ public:
     }
 
     void initData() {
+
+
 
 
         // generate corsses and arms
@@ -281,12 +284,24 @@ public:
 
 
         // generate data
-        GLuint vbo_v;
 
+        glGenBuffers(1, &ebo);
+
+        int indexes[] = {
+            0, 1, 2,
+            1, 2, 3
+        };
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexes), indexes, GL_STATIC_DRAW); 
+
+        GLuint vbo_v;
         glGenBuffers(1, &vbo_v);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo_v);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(data) , verts, GL_STATIC_DRAW); // for some reason only works with sizeof(dataa), (36 when verts gives 32)
+        
+        
         GLuint pos = glGetAttribLocation(id,(const GLchar*)("vertex_position"));
         glEnableVertexAttribArray(pos);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), NULL);
@@ -315,7 +330,8 @@ public:
         glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(matrix_location, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
-
-        glDrawArrays(GL_TRIANGLES, 0, vCount / 3.0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        //glDrawArrays(GL_TRIANGLES, 0, vCount / 3.0);
     }
 };
