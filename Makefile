@@ -3,3 +3,4 @@ LIB_DIRS = "-L/usr/local/lib -L/opt/X11/lib"
 
 build:
 	g++ -w main.cpp -o main -framework OpenGL -framework GLUT -lGLEW -lassimp
+	./main

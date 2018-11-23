@@ -1,8 +1,11 @@
 #include <vector>
 
 #define GLM_ENABLE_EXPERIMENTAL
+#define _USE_MATH_DEFINES
+
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <math.h>
 #include "glm/ext.hpp"
 #include "transform.h"
 class SkyBox {
@@ -196,13 +199,20 @@ public:
     glm::vec3 c; 
     float r;
     Transform * transform;
+
+    float cCount;
+    float aCount;
+
     Sphere(int shader, glm::vec3 centre, float rad, int crosses, int arms, Transform * transf) {
         id = shader;
         c = centre;
         r = rad;
         
-        vCount = 9; // to be cross * (2*arms) + 2
+        cCount = crosses;
+        aCount = arms;
 
+        vCount = 3 * (crosses * (2 * arms) + 2);
+        
         transform = transf;
         initData();
     }
@@ -210,13 +220,56 @@ public:
     void initData() {
 
 
-        // todo generate corsses and arms
-        float data[9] = {
-            -1,-1,0,
-            1,-1,0,
-            0,1,0
-        };
+        // generate corsses and arms
+        float data[vCount];
+    
+        // both ends
+        data[0] = c.x;
+        data[1] = c.y - r;
+        data[2] = c.z;
 
+        std::cout << cCount << "    " << aCount <<std::endl;
+        std::cout << vCount << std::endl;
+
+        int dataInd = 3;
+        for (float i = 0 ; i < cCount ; i++) {
+            // convert i into a y value
+            //step is rad*2 / cCount+1
+            float y = c.y - r + (i+1)*( (float) (r*2) / (float) (cCount+1));
+
+            //get radius at this height
+            float yR = sqrt(pow(r,2) - pow(y,2));
+            for (float j = 0; j < aCount ; j++ ) {
+
+                float divisionAmt = M_PI / ((float) aCount + 1.0);
+                float x = sin(divisionAmt * (j + 1) ) * yR;
+                float z = cos(divisionAmt * (j + 1) ) * yR;
+
+                std::cout << "part" << dataInd << std::endl;
+                data[dataInd] = c.x + x;
+                data[dataInd + 1] = y;
+                data[dataInd + 2] = c.z + z;
+
+                int semiOff = 3*aCount;
+                std::cout << "counter" << semiOff+dataInd << std::endl;
+                data[dataInd + semiOff ] = c.x - x;
+                data[dataInd + semiOff + 1] = y;
+                data[dataInd + semiOff + 2] = c.z - z;
+               
+                dataInd += 6;
+            }
+
+        }
+
+        data[vCount - 3] = c.x;
+        data[vCount - 2] = c.y + r;
+        data[vCount - 1] = c.z;
+
+        std::cout << std::endl;
+
+        for (int p = 0; p < vCount ; p ++) {
+            std::cout << p << ": " << data[p] << std::endl;
+        }
 
         verts = &data[0];
 
@@ -233,7 +286,7 @@ public:
         glGenBuffers(1, &vbo_v);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo_v);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(data) , verts, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(data) , verts, GL_STATIC_DRAW); // for some reason only works with sizeof(dataa), (36 when verts gives 32)
         GLuint pos = glGetAttribLocation(id,(const GLchar*)("vertex_position"));
         glEnableVertexAttribArray(pos);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), NULL);
@@ -247,10 +300,22 @@ public:
         glUseProgram(id);
     }
 
-    void draw() {
+    void draw(glm::mat4 view, glm::mat4 projection) {
         bindVAO();
         useShader();
-        glDepthFunc(GL_LEQUAL);
-        glDrawArrays(GL_TRIANGLES, 0, sizeof(verts));
+        glDepthFunc(GL_LESS);
+
+        int matrix_location = glGetUniformLocation(id, "model");
+        int view_mat_location = glGetUniformLocation(id, "view");
+        int proj_mat_location = glGetUniformLocation(id, "proj");
+
+
+        // update uniforms & draw
+        glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, glm::value_ptr(projection)    );
+        glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(matrix_location, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+
+
+        glDrawArrays(GL_TRIANGLES, 0, vCount / 3.0);
     }
 };

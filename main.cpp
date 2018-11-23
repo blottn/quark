@@ -158,7 +158,7 @@ void display() {
 
     sky->draw(camera->getView(), projection);
 	root->draw(glm::mat4(1.0f), camera->getView(), projection);
-    sphere->draw();
+    sphere->draw(camera->getView(), projection);
 
     //glutWarpPointer(middleX, middleY);
 	glutSwapBuffers();
@@ -223,7 +223,7 @@ void init()
             glm::vec3(0,1,0));
     initSkybox();
     GLuint sphereShader = CompileShaders("shaders/mvp.shader","shaders/red.shader");
-    sphere = new Sphere(sphereShader, vec3(0,0,0),10, 3, 3, new Transform());
+    sphere = new Sphere(sphereShader, vec3(0,0,0),10, 1, 1, new Transform());
 }
 
 // Placeholder code for the keypress
