@@ -39,7 +39,7 @@ using namespace std;
 const int width = 1600;
 const int height = 800;
 
-const int SPHERE_RES = 2;
+const int SPHERE_RES = 3;
 
 const int middleX = ((float) width ) / 2.0f;
 const int middleY = ((float) height ) / 2.0f;
@@ -215,7 +215,7 @@ void init()
 	root->addChild(*sub1);
 
     // view and projection init
-    projection = glm::perspective(glm::radians(90.0f), (float) glutGet(GLUT_WINDOW_WIDTH)/ (float) glutGet(    GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+    projection = glm::perspective(glm::radians(60.0f), (float) glutGet(GLUT_WINDOW_WIDTH)/ (float) glutGet(    GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
     view->translate = glm::translate(view->translate, glm::vec3(0.0f, 0.0f, -50.0f));
 
     camera = new Camera(
@@ -225,7 +225,7 @@ void init()
             glm::vec3(0,1,0));
     initSkybox();
     GLuint sphereShader = CompileShaders("shaders/mvp.shader","shaders/red.shader");
-    sphere = new Sphere(sphereShader, vec3(0,0,0),10, SPHERE_RES, SPHERE_RES, new Transform());
+    sphere = new Sphere(sphereShader, vec3(0,0,0),10, 2, 3, new Transform());
 }
 
 // Placeholder code for the keypress

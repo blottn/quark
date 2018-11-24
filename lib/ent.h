@@ -249,7 +249,6 @@ public:
                 data[dataInd + semiOff + 1] = y;
                 data[dataInd + semiOff + 2] = (float) (c.z - z);
                 std::cout << "writing to: " << std::endl << dataInd << " -> " << dataInd + 2 << std::endl << dataInd + semiOff << " -> " << dataInd + semiOff + 2 << std::endl;
-               //TODO why is this producing minint sometimes and only when not printed
                 dataInd += 3;
             }
             dataInd += 3*aCount;
@@ -258,16 +257,13 @@ public:
         data[vCount - 3] = c.x;
         data[vCount - 2] = c.y + r;
         data[vCount - 1] = c.z;
-
-
         
-
-        verts = &data[0];
-
-        for (int i = 0 ; i < vCount ; i++) {
-            std::cout << i << ": " << verts[i] << std::endl;
+        //for debug printing
+        for (int i = 0 ; i < vCount ; i+=3) {
+            std::cout << i / 3 << ": [ " << data[i] << ", " << data[i+1] << ", " << data[i+2] << " ]"<< std::endl;
         }
 
+        verts = &data[0];
 
         GLuint VAOs[1];
         glGenVertexArrays(1,VAOs);
@@ -305,9 +301,9 @@ public:
             // iterate over index offset from row start
             for (int j = 0; j < 3 * aCount*2*2; j += 6) {
                 int first = rowStartIndex + j / 6;
-                int right = (((first + 1) - rowStartIndex)%4)+rowStartIndex;
+                int right = (((first + 1) - rowStartIndex)% (((int)aCount)*2))+rowStartIndex;
                 int up = first + aCount*2;
-                int upRight = (((up + 1) - nextRowStartIndex)%4) + nextRowStartIndex;
+                int upRight = (((up + 1) - nextRowStartIndex)% (((int) aCount)*2)) + nextRowStartIndex;
 
                 indexes[trisPerCap*3 + (int)aCount*2*i + j + 0] = first;
                 indexes[trisPerCap*3 + (int)aCount*2*i + j + 1] = right;
@@ -319,15 +315,19 @@ public:
             }
         }
 
-        int maxInd = 2 + cCount * aCount * 2 - 1;//9
+        int maxInd = 2 + cCount * aCount * 2 - 1;
         int lowTop = maxInd - 2* aCount;
         for (int i = 0; i < 3*2*aCount; i+=3) {
             indexes[indexCount - 2*3 * (int)aCount + i] = lowTop + i/3;
-            indexes[indexCount - 2*3 * (int)aCount + i + 1] = ((lowTop + i/3 + 1 -lowTop) % 4) +lowTop;
+            indexes[indexCount - 2*3 * (int)aCount + i + 1] = ((lowTop + i/3 + 1 -lowTop) % (((int) aCount) *2)) +lowTop;
             indexes[indexCount - 2*3 * (int)aCount + i + 2] = maxInd;
         }
 
+        std::cout << std::endl;
 
+        for (int i = 0 ; i < indexCount ; i+=3) {
+            std::cout << i / 3 << ": [ " << indexes[i] << ", " << indexes[i+1] << ", " << indexes[i+2] << " ]"<< std::endl;
+        }
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexes), indexes, GL_STATIC_DRAW); 
 
@@ -367,6 +367,6 @@ public:
         glUniformMatrix4fv(matrix_location, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glDrawElements(GL_TRIANGLE_STRIP, 2*vCount, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLE_STRIP, 3*vCount, GL_UNSIGNED_INT, 0);
     }
 };
