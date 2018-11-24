@@ -257,11 +257,6 @@ public:
         data[vCount - 2] = c.y + r;
         data[vCount - 1] = c.z;
         
-        //for debug printing
-       /* for (int i = 0 ; i < vCount ; i+=3) {
-            std::cout << i / 3 << ": [ " << data[i] << ", " << data[i+1] << ", " << data[i+2] << " ]"<< std::endl;
-        }*/
-
         verts = &data[0];
 
         GLuint VAOs[1];
@@ -283,9 +278,7 @@ public:
         int triCount = faceCount *2  + (aCount *4);
         int indexCount = 3 * triCount;
 
-        std::cout << faceCount << " " << triCount << " " << indexCount << " " << std::endl;
         
-        //int indexCount = 3 * (4*aCount + (cCount - 2 + 1) * 4 * aCount);
         int indexes[indexCount];
         //bottom
         for (int i = 0; i < aCount*2 ; i++) {
@@ -294,18 +287,13 @@ public:
             indexes[i*3 + 2] = ((i+1) % (2 * aCount)) + 1;
         }
 
-        //aCount = 2
-        //cCount = 2
-
         int trisPerCap = 2*aCount;
         int trisPerRow = 2*2*aCount;
 
         //middles
         for (int i = 0 ; i < cCount -1; i++) {     //over rows
-            
             int rowStartIndex = 1 + i*aCount*2;
             int nextRowStartIndex = 1 + (i+1)*aCount*2;
-            std::cout << "start: " << rowStartIndex << std::endl;
             // iterate over index offset from row start
             for (int j = 0; j < 3 * aCount*2*2; j += 6) {
                 int first = rowStartIndex + j / 6;
@@ -320,8 +308,6 @@ public:
                 indexes[trisPerCap*3 + aCount*2*2*3*i + j + 3] = first;
                 indexes[trisPerCap*3 + aCount*2*2*3*i + j + 4] = up;
                 indexes[trisPerCap*3 + aCount*2*2*3*i + j + 5] = upRight;
-                std::cout << trisPerCap*3 +aCount*2*i + j + 0 << " w-> " << trisPerCap*3 + aCount*2*i + j + 0 << std::endl;
-                std::cout << std::endl << std::endl;
             }
         }
 
@@ -333,11 +319,7 @@ public:
             indexes[indexCount - 2*3 * aCount + i + 2] = maxInd;
         }
 
-        std::cout << std::endl;
 
-        for (int i = 0 ; i < indexCount ; i+=3) {
-            std::cout << i / 3 << ": [" << indexes[i] << ", " << indexes[i+1] << ", " << indexes[i+2] << "]" <<std::endl;
-        }
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexes), indexes, GL_STATIC_DRAW); 
 
