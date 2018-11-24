@@ -39,6 +39,8 @@ using namespace std;
 const int width = 1600;
 const int height = 800;
 
+const int SPHERE_RES = 2;
+
 const int middleX = ((float) width ) / 2.0f;
 const int middleY = ((float) height ) / 2.0f;
 
@@ -223,7 +225,7 @@ void init()
             glm::vec3(0,1,0));
     initSkybox();
     GLuint sphereShader = CompileShaders("shaders/mvp.shader","shaders/red.shader");
-    sphere = new Sphere(sphereShader, vec3(0,0,0),10, 1, 1, new Transform());
+    sphere = new Sphere(sphereShader, vec3(0,0,0),10, SPHERE_RES, SPHERE_RES, new Transform());
 }
 
 // Placeholder code for the keypress
