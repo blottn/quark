@@ -201,8 +201,8 @@ public:
     float r;
     Transform * transform;
 
-    float cCount;
-    float aCount;
+    int cCount;
+    int aCount;
 
     Sphere(int shader, glm::vec3 centre, float rad, int crosses, int arms, Transform * transf) {
         id = shader;
@@ -248,7 +248,6 @@ public:
                 data[dataInd + semiOff ] = (float) (c.x - x);
                 data[dataInd + semiOff + 1] = y;
                 data[dataInd + semiOff + 2] = (float) (c.z - z);
-                std::cout << "writing to: " << std::endl << dataInd << " -> " << dataInd + 2 << std::endl << dataInd + semiOff << " -> " << dataInd + semiOff + 2 << std::endl;
                 dataInd += 3;
             }
             dataInd += 3*aCount;
@@ -259,9 +258,9 @@ public:
         data[vCount - 1] = c.z;
         
         //for debug printing
-        for (int i = 0 ; i < vCount ; i+=3) {
+       /* for (int i = 0 ; i < vCount ; i+=3) {
             std::cout << i / 3 << ": [ " << data[i] << ", " << data[i+1] << ", " << data[i+2] << " ]"<< std::endl;
-        }
+        }*/
 
         verts = &data[0];
 
@@ -277,13 +276,22 @@ public:
         glGenBuffers(1, &ebo);
  
         // top and bottom, middles
-        int indexCount =  3*(4*(int)aCount + ((int)cCount - 2 + 1) * 4 * (int)aCount);
+        // number of indexes = 3 * number of triangles
+        // number of triangles = (aCount * 2)*2 + faceCount*2
+        // number of faces = (aCount * 2) * (cCount-1)
+        int faceCount = aCount * 2 * (cCount - 1);
+        int triCount = faceCount *2  + (aCount *4);
+        int indexCount = 3 * triCount;
+
+        std::cout << faceCount << " " << triCount << " " << indexCount << " " << std::endl;
+        
+        //int indexCount = 3 * (4*aCount + (cCount - 2 + 1) * 4 * aCount);
         int indexes[indexCount];
         //bottom
         for (int i = 0; i < aCount*2 ; i++) {
             indexes[i*3] = 0;
             indexes[i*3 + 1] = i+1;
-            indexes[i*3 + 2] = ((i+1) % (2 * (int) aCount)) + 1;
+            indexes[i*3 + 2] = ((i+1) % (2 * aCount)) + 1;
         }
 
         //aCount = 2
@@ -297,36 +305,38 @@ public:
             
             int rowStartIndex = 1 + i*aCount*2;
             int nextRowStartIndex = 1 + (i+1)*aCount*2;
-            
+            std::cout << "start: " << rowStartIndex << std::endl;
             // iterate over index offset from row start
             for (int j = 0; j < 3 * aCount*2*2; j += 6) {
                 int first = rowStartIndex + j / 6;
-                int right = (((first + 1) - rowStartIndex)% (((int)aCount)*2))+rowStartIndex;
+                int right = (((first + 1) - rowStartIndex)% ((aCount)*2))+rowStartIndex;
                 int up = first + aCount*2;
-                int upRight = (((up + 1) - nextRowStartIndex)% (((int) aCount)*2)) + nextRowStartIndex;
+                int upRight = (((up + 1) - nextRowStartIndex)% (( aCount)*2)) + nextRowStartIndex;
 
-                indexes[trisPerCap*3 + (int)aCount*2*i + j + 0] = first;
-                indexes[trisPerCap*3 + (int)aCount*2*i + j + 1] = right;
-                indexes[trisPerCap*3 + (int)aCount*2*i + j + 2] = upRight;
+                indexes[trisPerCap*3 + aCount*2*2*3*i + j + 0] = first;
+                indexes[trisPerCap*3 + aCount*2*2*3*i + j + 1] = right;
+                indexes[trisPerCap*3 + aCount*2*2*3*i + j + 2] = upRight;
                 //      bottomcap      previous rows 
-                indexes[trisPerCap*3 + (int)aCount*2*i + j + 3] = first;
-                indexes[trisPerCap*3 + (int)aCount*2*i + j + 4] = up;
-                indexes[trisPerCap*3 + (int)aCount*2*i + j + 5] = upRight;
+                indexes[trisPerCap*3 + aCount*2*2*3*i + j + 3] = first;
+                indexes[trisPerCap*3 + aCount*2*2*3*i + j + 4] = up;
+                indexes[trisPerCap*3 + aCount*2*2*3*i + j + 5] = upRight;
+                std::cout << trisPerCap*3 +aCount*2*i + j + 0 << " w-> " << trisPerCap*3 + aCount*2*i + j + 0 << std::endl;
+                std::cout << std::endl << std::endl;
             }
         }
 
         int maxInd = 2 + cCount * aCount * 2 - 1;
         int lowTop = maxInd - 2* aCount;
         for (int i = 0; i < 3*2*aCount; i+=3) {
-            indexes[indexCount - 2*3 * (int)aCount + i] = lowTop + i/3;
-            indexes[indexCount - 2*3 * (int)aCount + i + 1] = ((lowTop + i/3 + 1 -lowTop) % (((int) aCount) *2)) +lowTop;
-            indexes[indexCount - 2*3 * (int)aCount + i + 2] = maxInd;
+            indexes[indexCount - 2*3 * aCount + i] = lowTop + i/3;
+            indexes[indexCount - 2*3 * aCount + i + 1] = ((lowTop + i/3 + 1 -lowTop) % (( aCount) *2)) +lowTop;
+            indexes[indexCount - 2*3 * aCount + i + 2] = maxInd;
         }
 
         std::cout << std::endl;
 
         for (int i = 0 ; i < indexCount ; i+=3) {
-            std::cout << i / 3 << ": [ " << indexes[i] << ", " << indexes[i+1] << ", " << indexes[i+2] << " ]"<< std::endl;
+            std::cout << i / 3 << ": [" << indexes[i] << ", " << indexes[i+1] << ", " << indexes[i+2] << "]" <<std::endl;
         }
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexes), indexes, GL_STATIC_DRAW); 

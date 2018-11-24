@@ -225,7 +225,7 @@ void init()
             glm::vec3(0,1,0));
     initSkybox();
     GLuint sphereShader = CompileShaders("shaders/mvp.shader","shaders/red.shader");
-    sphere = new Sphere(sphereShader, vec3(0,0,0),10, 2, 3, new Transform());
+    sphere = new Sphere(sphereShader, vec3(0,0,0),10, 4, 4, new Transform());
 }
 
 // Placeholder code for the keypress
