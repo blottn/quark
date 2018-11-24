@@ -21,6 +21,7 @@
 
 #include "lib/data.h"
 #include "lib/ent.h"
+#include "lib/sphere.h"
 #include "lib/sky.h"
 #include "lib/camera.h"
 
@@ -224,8 +225,12 @@ void init()
             glm::vec3(1,0,0),
             glm::vec3(0,1,0));
     initSkybox();
+
+    // generate Sphere
     GLuint sphereShader = CompileShaders("shaders/mvp.shader","shaders/red.shader");
-    sphere = new Sphere(sphereShader, vec3(0,0,0),10, SPHERE_RES, SPHERE_RES, new Transform());
+    Transform * sphereTransform = new Transform();
+    sphereTransform->scale = scale(sphereTransform->scale, vec3(0.05,0.05,0.05));
+    sphere = new Sphere(sphereShader, vec3(0,0,0),10, SPHERE_RES, SPHERE_RES, sphereTransform);
 }
 
 // Placeholder code for the keypress
