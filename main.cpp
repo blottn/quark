@@ -170,6 +170,7 @@ void display() {
 
 // periodic function for changing translation amts etc
 void updateScene() {
+    sun->updateChildren();
 	// Draw the next frame
 	glutPostRedisplay();
 }
@@ -204,8 +205,8 @@ void initPlanets() {
 
 
     Transform * planetTransform = new Transform();
-    planetTransform->scale = scale(planetTransform->scale, vec3(0.08,0.08,0.08));
-    planetTransform->translate = translate(planetTransform->translate, vec3(2000,0,0));
+    planetTransform->scale = scale(planetTransform->scale, vec3(0.15,0.15,0.15));
+    planetTransform->translate = translate(planetTransform->translate, vec3(200,0,0));
     Sphere * earth = new Sphere(sphereShader, vec3(0,0,0), 10, SPHERE_RES, SPHERE_RES, planetTransform, earthTex);
 
     sun->addChild(*earth);

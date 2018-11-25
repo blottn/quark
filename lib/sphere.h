@@ -9,12 +9,16 @@
 
 using namespace std;
 
+const float ORBIT_SPEED = 0.03f;
+
 class Sphere {
 private:
     GLuint vao;
     GLuint ebo;
 
     vector<Sphere> * subs;
+
+    float orbitDeg = 0;
 
     float * verts;
     int vCount;
@@ -204,5 +208,15 @@ public:
         for (Sphere child : (*subs) ) {
             child.draw(model * transform->compute(), view, projection);
         }
+    }
+    void updateChildren() {
+        for (Sphere child : (*subs) ) {
+            child.update();
+        }
+    }
+
+    void update() {
+        this->transform->orbital = glm::rotate(this->transform->orbital, glm::radians(ORBIT_SPEED), glm::vec3(0,1,0));
+        updateChildren();
     }
 };
