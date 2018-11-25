@@ -56,7 +56,7 @@ Camera * camera;
 Transform * view = new Transform();
 glm::mat4 projection = glm::mat4(1.0f);
 
-Sphere * sphere;
+Sphere * sun;
 Plane * plane;
 
 // Shader Functions
@@ -163,7 +163,7 @@ void display() {
     sky->draw(camera->getView(), projection);
     //plane->draw(camera->getView(), projection);
 	//root->draw(glm::mat4(1.0f), camera->getView(), projection);
-    sphere->draw(camera->getView(), projection);
+    sun->draw(mat4(1.0f),camera->getView(), projection);
     //glutWarpPointer(middleX, middleY);
 	glutSwapBuffers();
 }
@@ -189,6 +189,26 @@ void initSkybox() {
     int texId = loadCubemap(*sides);
 
     sky = new SkyBox(skyShader, texId);
+
+}
+
+void initPlanets() {
+    GLuint sphereShader = CompileShaders("shaders/sphere_vert.shader","shaders/sphere_frag.shader");
+
+    GLuint sunTex = load("models/sun.jpg");
+    GLuint earthTex = load("models/earth.jpg");
+
+    Transform * sphereTransform = new Transform();
+    sphereTransform->scale = scale(sphereTransform->scale, vec3(0.2,0.2,0.2));
+    sun = new Sphere(sphereShader, vec3(0,0,0),10, SPHERE_RES, SPHERE_RES, sphereTransform, sunTex);
+
+
+    Transform * planetTransform = new Transform();
+    planetTransform->scale = scale(planetTransform->scale, vec3(0.08,0.08,0.08));
+    planetTransform->translate = translate(planetTransform->translate, vec3(2000,0,0));
+    Sphere * earth = new Sphere(sphereShader, vec3(0,0,0), 10, SPHERE_RES, SPHERE_RES, planetTransform, earthTex);
+
+    sun->addChild(*earth);
 
 }
 
@@ -226,19 +246,8 @@ void init()
             glm::vec3(1,0,0),
             glm::vec3(0,1,0));
     initSkybox();
-
-    GLuint sphereShader = CompileShaders("shaders/sphere_vert.shader","shaders/sphere_frag.shader");
-    GLuint planeShader = CompileShaders("shaders/simple_vert.shader","shaders/simple_frag.shader");
-
-
-    Transform * planeTransform = new Transform();
-    planeTransform->translate = glm::translate(planeTransform->translate, vec3(0.0f, -10, 0.0f));
-    plane = new Plane(sphereShader, planeTransform);
     
-    GLuint sunTex = load("models/sun.jpg");
-    Transform * sphereTransform = new Transform();
-    sphereTransform->scale = scale(sphereTransform->scale, vec3(0.05,0.05,0.05));
-    sphere = new Sphere(sphereShader, vec3(0,0,0),10, SPHERE_RES, SPHERE_RES, sphereTransform, sunTex);
+    initPlanets();
 }
 
 // Placeholder code for the keypress
@@ -284,7 +293,7 @@ int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_3_2_CORE_PROFILE | GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(width, height);
-	glutCreateWindow("Models");
+	glutCreateWindow("Quark");
 
 	// Tell glut where the display function is
 	glutDisplayFunc(display);

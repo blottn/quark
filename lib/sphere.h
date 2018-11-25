@@ -183,7 +183,7 @@ public:
         glUseProgram(id);
     }
 
-    void draw(glm::mat4 view, glm::mat4 projection) {
+    void draw(glm::mat4 model, glm::mat4 view, glm::mat4 projection) {
         bindVAO();
         useShader();
         glDepthFunc(GL_LESS);
@@ -195,10 +195,14 @@ public:
         // update uniforms & draw
         glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, glm::value_ptr(projection)    );
         glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(model_mat_location, 1, GL_FALSE, glm::value_ptr(transform->compute()));
+        glUniformMatrix4fv(model_mat_location, 1, GL_FALSE, glm::value_ptr(model * transform->compute()));
 
         glBindTexture(GL_TEXTURE_2D, tex);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glDrawElements(GL_TRIANGLES, 3*vCount, GL_UNSIGNED_INT, 0);
+
+        for (Sphere child : (*subs) ) {
+            child.draw(model * transform->compute(), view, projection);
+        }
     }
 };

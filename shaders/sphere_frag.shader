@@ -10,5 +10,5 @@ in vec3 LightIntensity;
 void main(){
     vec2 texCoord = vec2(coord.x, coord.y);
     vec4 texture = texture(tex, texCoord);
-	fragColor = texture;//vec4(LightIntensity, 1.0);
+	fragColor = texture * vec4(LightIntensity, 1.0);
 }
