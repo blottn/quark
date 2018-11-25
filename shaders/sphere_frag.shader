@@ -2,7 +2,12 @@
 
 out vec4 fragColor;
 
+uniform sampler2D tex;
+
 in vec3 LightIntensity;
+
 void main(){
-	fragColor = vec4 (LightIntensity, 1.0);
+    vec3 texCoord = vec3(0,0,0);
+    vec4 texture = texture(tex, texCoord);
+	fragColor = vec4(LightIntensity, 1.0);
 }
