@@ -1,8 +1,6 @@
 #version 330
 
 in vec3 vertex_position;
-in vec3 vertex_normal;
-
 
 out vec3 LightIntensity;
 
@@ -21,7 +19,7 @@ void main(){
   mat3 NormalMatrix =  mat3(ModelViewMatrix);
   // Convert normal and position to eye coords
   // Normal in view space
-  vec3 tnorm = normalize( NormalMatrix * vertex_normal);
+  vec3 tnorm = normalize( NormalMatrix * normalize(vertex_position));
   // Position in view space
   vec4 eyeCoords = ModelViewMatrix * vec4(vertex_position,1.0);
   //normalised vector towards the light source

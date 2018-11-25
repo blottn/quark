@@ -228,7 +228,7 @@ void init()
     initSkybox();
 
     // generate Sphere
-    GLuint sphereShader = CompileShaders("shaders/simple_vert.shader","shaders/simple_frag.shader");
+    GLuint sphereShader = CompileShaders("shaders/sphere_vert.shader","shaders/simple_frag.shader");
 
     Transform * planeTransform = new Transform();
     planeTransform->translate = glm::translate(planeTransform->translate, vec3(0.0f, -10, 0.0f));
