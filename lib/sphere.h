@@ -5,11 +5,16 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <math.h>
 #include <glm/ext.hpp>
+#include <vector>
+
+using namespace std;
 
 class Sphere {
 private:
     GLuint vao;
     GLuint ebo;
+
+    vector<Sphere> * subs;
 
     float * verts;
     int vCount;
@@ -30,6 +35,8 @@ public:
         c = centre;
         r = rad;
         
+        subs = new vector<Sphere>();
+
         cCount = crosses;
         aCount = arms;
 
@@ -160,7 +167,11 @@ public:
         glEnableVertexAttribArray(pos);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), NULL);
     }
-    
+ 
+    void addChild(Sphere sphere) {
+        subs->push_back(sphere);
+    }
+
     void bindVAO() {
         glBindVertexArray(vao);
     }
@@ -184,6 +195,6 @@ public:
         glUniformMatrix4fv(model_mat_location, 1, GL_FALSE, glm::value_ptr(transform->compute()));
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glDrawElements(GL_TRIANGLE_STRIP, 9*vCount, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 3*vCount, GL_UNSIGNED_INT, 0);
     }
 };

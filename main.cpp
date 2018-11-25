@@ -22,7 +22,7 @@
 #include "lib/data.h"
 #include "lib/ent.h"
 #include "lib/sphere.h"
-#include "lib/sky.h"
+#include "lib/texture.h"
 #include "lib/camera.h"
 
 
@@ -40,7 +40,7 @@ using namespace std;
 const int width = 1600;
 const int height = 800;
 
-const int SPHERE_RES =100;
+const int SPHERE_RES = 2;
 
 const int middleX = ((float) width ) / 2.0f;
 const int middleY = ((float) height ) / 2.0f;
@@ -161,9 +161,9 @@ void display() {
 	glUseProgram(shaderProgramID);
 
     sky->draw(camera->getView(), projection);
+    //plane->draw(camera->getView(), projection);
 	//root->draw(glm::mat4(1.0f), camera->getView(), projection);
     sphere->draw(camera->getView(), projection);
-    plane->draw(camera->getView(), projection);
     //glutWarpPointer(middleX, middleY);
 	glutSwapBuffers();
 }
@@ -244,22 +244,22 @@ void keypress(unsigned char key, int x, int y) {
     const int lookspeed = 20;
 	switch (key) {
     case 'a': //left
-        camera->move(vec3(-1,0,0));
+        camera->move(vec3(-0.1,0,0));
         break;
     case 'd':
-        camera->move(vec3(1,0,0));
+        camera->move(vec3(0.1,0,0));
         break;
     case 'r':   //up
-        camera->move(vec3(0,1,0));
+        camera->move(vec3(0,0.1,0));
         break;
     case 'e':
-        camera->move(vec3(0,-1,0));
+        camera->move(vec3(0,-0.1,0));
         break;
     case 'w':       //forwards
-        camera->move(vec3(0,0,1));
+        camera->move(vec3(0,0,0.1));
         break;
     case 's':
-        camera->move(vec3(0,0,-1));
+        camera->move(vec3(0,0,-0.1));
         break;
     case 'y':
         camera->look(-lookspeed,0);
