@@ -4,10 +4,11 @@ out vec4 fragColor;
 
 uniform sampler2D tex;
 
+in vec3 coord;
 in vec3 LightIntensity;
 
 void main(){
-    vec3 texCoord = vec3(0,0,0);
+    vec2 texCoord = vec2(coord.x, coord.y);
     vec4 texture = texture(tex, texCoord);
-	fragColor = vec4(LightIntensity, 1.0);
+	fragColor = texture;//vec4(LightIntensity, 1.0);
 }

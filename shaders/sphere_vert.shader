@@ -3,6 +3,7 @@
 in vec3 vertex_position;
 
 out vec3 LightIntensity;
+out vec3 coord;
 
 vec4 LightPosition = vec4 (10.0, 10.0, 4.0, 1.0); // Light position in world coords.
 vec3 Kd = vec3 (0.0, 0.8, 0.0); // green diffuse surface reflectance
@@ -14,7 +15,7 @@ uniform mat4 proj;
 uniform mat4 model;
 
 void main(){
-
+  coord = normalize(vertex_position);
   mat4 ModelViewMatrix = view * model;
   mat3 NormalMatrix =  mat3(ModelViewMatrix);
   // Convert normal and position to eye coords

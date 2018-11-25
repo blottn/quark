@@ -197,6 +197,7 @@ public:
         glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(model_mat_location, 1, GL_FALSE, glm::value_ptr(transform->compute()));
 
+        glBindTexture(GL_TEXTURE_2D, tex);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glDrawElements(GL_TRIANGLES, 3*vCount, GL_UNSIGNED_INT, 0);
     }
