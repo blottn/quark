@@ -12,7 +12,9 @@ private:
     GLuint ebo;
 
     float * verts;
+    float * norms;
     int vCount;
+   
 
 public:
     GLuint id;
@@ -42,7 +44,7 @@ public:
 
         // generate crosses and arms
         float data[vCount];
-    
+
         // both ends
         data[0] = c.x;
         data[1] = c.y - r;
@@ -64,6 +66,9 @@ public:
                 data[dataInd] = (float) (c.x + x);
                 data[dataInd + 1] = y;
                 data[dataInd + 2] = (float) (c.z + z);
+
+                
+
                 int semiOff = 3*aCount;
                 data[dataInd + semiOff ] = (float) (c.x - x);
                 data[dataInd + semiOff + 1] = y;
@@ -77,7 +82,23 @@ public:
         data[vCount - 2] = c.y + r;
         data[vCount - 1] = c.z;
         
+    
+        // generate normals
+        float normals[vCount];
+        for (int i = 0;  i < vCount ; i += 3) {
+            glm::vec3 item = glm::vec3(data[i], data[i+1], data[i+2]);
+            glm::vec3 normal = item - c;
+            normals[i] = normal.x;
+            normals[i + 1] = normal.y;
+            normals[i + 2] = normal.z;
+        }
+        for (int i = 0 ; i < vCount ; i += 3) {
+            std::cout << i  << ": [" << normals[i] <<", " << normals[i+1] << ", " << normals[i+2] << "]" << std::endl;
+        }
+
+        norms = &normals[0];
         verts = &data[0];
+        
 
         GLuint VAOs[1];
         glGenVertexArrays(1,VAOs);
@@ -151,8 +172,21 @@ public:
         
         
         GLuint pos = glGetAttribLocation(id,(const GLchar*)("vertex_position"));
+        GLuint norm = glGetAttribLocation(id,(const GLchar*)("vertex_normal"));
+
         glEnableVertexAttribArray(pos);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), NULL);
+
+
+        GLuint vbo_n;
+        glGenBuffers(1, &vbo_n);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_n);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(normals) , norms, GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(norm);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), NULL);
+
+
     }
     
     void bindVAO() {
@@ -166,7 +200,7 @@ public:
     void draw(glm::mat4 view, glm::mat4 projection) {
         bindVAO();
         useShader();
-        glDepthFunc(GL_LEQUAL);
+        glDepthFunc(GL_LESS);
 
         int model_mat_location = glGetUniformLocation(id, "model");
         int view_mat_location = glGetUniformLocation(id, "view");
@@ -176,7 +210,6 @@ public:
         // update uniforms & draw
         glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, glm::value_ptr(projection)    );
         glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, glm::value_ptr(view));
-        glm::mat4 model = transform->compute();
         glUniformMatrix4fv(model_mat_location, 1, GL_FALSE, glm::value_ptr(transform->compute()));
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);

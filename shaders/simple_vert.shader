@@ -21,7 +21,8 @@ void main(){
   mat3 NormalMatrix =  mat3(ModelViewMatrix);
   // Convert normal and position to eye coords
   // Normal in view space
-  vec3 tnorm = normalize( NormalMatrix * vertex_normal);
+  vec3 nn = vec3(0.0,1.0,0.0) - vec3(0.0,1.0,0.0) + vec3(0.0,1.0,0.0);
+  vec3 tnorm = normalize( NormalMatrix * nn);//vertex_normal);
   // Position in view space
   vec4 eyeCoords = ModelViewMatrix * vec4(vertex_position,1.0);
   //normalised vector towards the light source

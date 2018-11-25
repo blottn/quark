@@ -40,7 +40,7 @@ using namespace std;
 const int width = 1600;
 const int height = 800;
 
-const int SPHERE_RES = 100;
+const int SPHERE_RES =100;
 
 const int middleX = ((float) width ) / 2.0f;
 const int middleY = ((float) height ) / 2.0f;
@@ -57,6 +57,7 @@ Transform * view = new Transform();
 glm::mat4 projection = glm::mat4(1.0f);
 
 Sphere * sphere;
+Plane * plane;
 
 // Shader Functions
 char* readShaderSource(const char* shaderFile) {
@@ -160,9 +161,9 @@ void display() {
 	glUseProgram(shaderProgramID);
 
     sky->draw(camera->getView(), projection);
-	root->draw(glm::mat4(1.0f), camera->getView(), projection);
+	//root->draw(glm::mat4(1.0f), camera->getView(), projection);
     sphere->draw(camera->getView(), projection);
-
+    plane->draw(camera->getView(), projection);
     //glutWarpPointer(middleX, middleY);
 	glutSwapBuffers();
 }
@@ -227,7 +228,12 @@ void init()
     initSkybox();
 
     // generate Sphere
-    GLuint sphereShader = CompileShaders("shaders/mvp.shader","shaders/red.shader");
+    GLuint sphereShader = CompileShaders("shaders/simple_vert.shader","shaders/simple_frag.shader");
+
+    Transform * planeTransform = new Transform();
+    planeTransform->translate = glm::translate(planeTransform->translate, vec3(0.0f, -10, 0.0f));
+    plane = new Plane(sphereShader, planeTransform);
+    
     Transform * sphereTransform = new Transform();
     sphereTransform->scale = scale(sphereTransform->scale, vec3(0.05,0.05,0.05));
     sphere = new Sphere(sphereShader, vec3(0,0,0),10, SPHERE_RES, SPHERE_RES, sphereTransform);
