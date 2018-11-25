@@ -40,7 +40,7 @@ using namespace std;
 const int width = 1600;
 const int height = 800;
 
-const int SPHERE_RES = 2;
+const int SPHERE_RES = 100;
 
 const int middleX = ((float) width ) / 2.0f;
 const int middleY = ((float) height ) / 2.0f;
