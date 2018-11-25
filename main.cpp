@@ -221,8 +221,8 @@ void init()
     view->translate = glm::translate(view->translate, glm::vec3(0.0f, 0.0f, -50.0f));
 
     camera = new Camera(
-            glm::vec3(0,0,-10),
-            glm::vec3(0,0,1),
+            glm::vec3(0,0,10),
+            glm::vec3(0,0,-1),
             glm::vec3(1,0,0),
             glm::vec3(0,1,0));
     initSkybox();
@@ -234,9 +234,10 @@ void init()
     planeTransform->translate = glm::translate(planeTransform->translate, vec3(0.0f, -10, 0.0f));
     plane = new Plane(sphereShader, planeTransform);
     
+    GLuint sunTex = load("models/sun.jpg");
     Transform * sphereTransform = new Transform();
     sphereTransform->scale = scale(sphereTransform->scale, vec3(0.05,0.05,0.05));
-    sphere = new Sphere(sphereShader, vec3(0,0,0),10, SPHERE_RES, SPHERE_RES, sphereTransform);
+    sphere = new Sphere(sphereShader, vec3(0,0,0),10, SPHERE_RES, SPHERE_RES, sphereTransform, sunTex);
 }
 
 // Placeholder code for the keypress

@@ -22,19 +22,22 @@ private:
 
 public:
     GLuint id;
-    
+    GLuint tex;
+
     glm::vec3 c; 
     float r;
+    
     Transform * transform;
 
     int cCount;
     int aCount;
 
-    Sphere(int shader, glm::vec3 centre, float rad, int crosses, int arms, Transform * transf) {
+    Sphere(int shader, glm::vec3 centre, float rad, int crosses, int arms, Transform * transf, GLuint texture) {
         id = shader;
         c = centre;
         r = rad;
-        
+        tex = texture;
+
         subs = new vector<Sphere>();
 
         cCount = crosses;
