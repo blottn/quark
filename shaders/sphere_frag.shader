@@ -10,6 +10,7 @@ uniform int shininess;
 in vec3 coord;
 in vec3 norm;
 in vec3 FragPos;  
+in vec2 TexCoord;
 
 vec3 lPos = vec3(0.0, 0.0, 0.0); // Light position in world coords.
 vec3 lColor = vec3 (1.0, 1.0, 1.0); // green diffuse surface reflectance
@@ -34,8 +35,8 @@ void main(){
         vec3 spec = power * specularity * lColor;
         LightIntensity = ambient + diffuse + spec;
     }
-    vec2 texCoord = vec2(coord.x, coord.y);
-    vec4 texture = texture(tex, texCoord);
+    //vec2 texCoord = vec2(coord.x, coord.y);
+    vec4 texture = texture(tex, TexCoord);
     
 
 	fragColor = texture * vec4(LightIntensity, 1.0);
