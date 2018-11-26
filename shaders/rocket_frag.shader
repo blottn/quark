@@ -27,11 +27,11 @@ void main(){
         float diffusion = max(dot(normalize(norm), lightDir), 0.0);
         vec3 diffuse = diffusion * lColor;
 
-        float power = 1.0;
+        float power = 0.4;
         vec3 cameraDir = normalize(cameraPos-FragPos);
         vec3 ref = reflect(-lightDir, normalize(norm));
 
-        float specularity = pow(max(dot(cameraDir, ref), 0.0), 64);
+        float specularity = pow(max(dot(cameraDir, ref), 0.0), 128);
         vec3 spec = power * specularity * lColor;
         LightIntensity = ambient + diffuse + spec;
     }

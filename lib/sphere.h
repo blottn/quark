@@ -36,7 +36,7 @@ public:
     int cCount;
     int aCount;
 
-    float ORBIT_SPEED = 0.005f;
+    float ORBIT_SPEED = 0.00001f;
 
     Sphere(int shader, glm::vec3 centre, float rad, int crosses, int arms, Transform * transf, GLuint texture, int source) {
         id = shader;
@@ -200,7 +200,6 @@ public:
         int proj_mat_location = glGetUniformLocation(id, "proj");
         int bright_int_location = glGetUniformLocation(id, "bright");
         int camera_location = glGetUniformLocation(id, "cameraPos");
-
         // update uniforms & draw
         glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, glm::value_ptr(projection)    );
         glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, glm::value_ptr(view));

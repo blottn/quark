@@ -161,7 +161,7 @@ void display() {
 
     sky->draw(camera->getView(), projection);
     sun->draw(mat4(1.0f),camera->getView(), projection, camera->mPos);
-    rocket->draw(mat4(1.0f), camera->getView(), projection);
+    rocket->draw(mat4(1.0f), camera->getView(), projection, camera->mPos);
     sunParticles->draw(camera->getView(), projection);
     if (warp)
         glutWarpPointer(middleX, middleY);
@@ -171,7 +171,9 @@ void display() {
 void updateScene() {
     sun->updateChildren();
     sunParticles->update();
-    //rocket->update();
+    rocket->update();
+    if (warp)
+        camera->mPos = glm::translate(rocket->model->compute(),vec3(0,0,-1)) * vec4(0.0,0.0,0.0,1.0);
 	glutPostRedisplay();
 }
 
@@ -197,7 +199,7 @@ void initPlanets() {
 
     GLuint sunTex = load("models/sun.jpg",0);
     GLuint earthTex = load("models/earth.jpg",0);
-    GLuint moonTex = load("models/earth.jpg",0);
+    GLuint moonTex = load("models/moon.jpg",0);
 
     Transform * sphereTransform = new Transform();
     sphereTransform->scale = scale(sphereTransform->scale, vec3(0.2,0.2,0.2));
@@ -297,7 +299,10 @@ void keypress(unsigned char key, int x, int y) {
         camera->move(vec3(0,0,-0.1));
         break;
     case ' ':
-        warp = 1;
+        if (warp)
+            warp = 0;
+        else
+            warp = 1;
         break;
     case 'y':
         camera->look(-lookspeed,0);

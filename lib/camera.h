@@ -33,6 +33,7 @@ public:
     }
 
     void look(float xOff, float yOff) {
+        std::cout << xOff << " " << yOff << std::endl;
         xOff *= 0.1f;
         yOff *= 0.1f;
 
@@ -56,10 +57,7 @@ public:
         front.z = sin(radians(yaw)) * cos(radians(pitch));
         mFront = normalize(front);
         // Also re-calculate the Right and Up vector
-        mRight = normalize(cross(mFront, vec3(0,1,0)));  // Normalize the vectors, because th    eir length gets closer to 0 the more you look up or down which results in slower movement.
+        mRight = normalize(cross(mFront, vec3(0,1,0)));
         mUp = normalize(cross(mRight, mFront));
-
     }
-
-
 };
