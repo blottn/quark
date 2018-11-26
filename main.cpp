@@ -24,7 +24,7 @@
 #include "lib/sphere.h"
 #include "lib/texture.h"
 #include "lib/camera.h"
-
+#include "lib/particle.h"
 
 /*----------------------------------------------------------------------------
 MESH TO LOAD
@@ -49,6 +49,7 @@ GLuint shaderProgramID;
 
 Ent * root;
 SkyBox * sky;
+ParticleEffect * sunParticles;
 
 Camera * camera;
 
@@ -160,10 +161,9 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgramID);
 
-    sky->draw(camera->getView(), projection);
-    //plane->draw(camera->getView(), projection);
-	//root->draw(glm::mat4(1.0f), camera->getView(), projection);
-    sun->draw(mat4(1.0f),camera->getView(), projection);
+    //sky->draw(camera->getView(), projection);
+    //sun->draw(mat4(1.0f),camera->getView(), projection);
+    sunParticles->draw(camera->getView(), projection);
     //glutWarpPointer(middleX, middleY);
 	glutSwapBuffers();
 }
@@ -196,8 +196,8 @@ void initSkybox() {
 void initPlanets() {
     GLuint sphereShader = CompileShaders("shaders/sphere_vert.shader","shaders/sphere_frag.shader");
 
-    GLuint sunTex = load("models/sun.jpg");
-    GLuint earthTex = load("models/earth.jpg");
+    GLuint sunTex = load("models/sun.jpg",0);
+    GLuint earthTex = load("models/earth.jpg",0);
 
     Transform * sphereTransform = new Transform();
     sphereTransform->scale = scale(sphereTransform->scale, vec3(0.2,0.2,0.2));
@@ -205,12 +205,25 @@ void initPlanets() {
 
 
     Transform * planetTransform = new Transform();
-    planetTransform->scale = scale(planetTransform->scale, vec3(0.15,0.15,0.15));
+    planetTransform->scale = scale(planetTransform->scale, vec3(0.5,0.5,0.5));
     planetTransform->translate = translate(planetTransform->translate, vec3(200,0,0));
+
+    Transform * moonTransform = new Transform();
+    moonTransform->scale = scale(moonTransform->scale, vec3(0.5,0.5,0.5));
+    moonTransform->translate = translate(moonTransform->translate, vec3(10,0,0));
+
     Sphere * earth = new Sphere(sphereShader, vec3(0,0,0), 10, SPHERE_RES, SPHERE_RES, planetTransform, earthTex);
-
+    Sphere * moon = new Sphere(sphereShader, vec3(0,0,0), 10, SPHERE_RES, SPHERE_RES, planetTransform, earthTex);
+    moon->ORBIT_SPEED = 0.04f;
     sun->addChild(*earth);
+    earth->addChild(*moon);
+}
 
+void initParticles() {
+
+    GLuint particleShader = CompileShaders("shaders/particle_vert.shader", "shaders/particle_frag.shader");
+    GLuint partTex = load("models/fire.png",4);
+    sunParticles = new ParticleEffect(vec3(0,0,0), particleShader, partTex);
 }
 
 void init()
@@ -247,8 +260,8 @@ void init()
             glm::vec3(1,0,0),
             glm::vec3(0,1,0));
     initSkybox();
-    
     initPlanets();
+    initParticles();
 }
 
 // Placeholder code for the keypress

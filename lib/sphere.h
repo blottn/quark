@@ -9,7 +9,6 @@
 
 using namespace std;
 
-const float ORBIT_SPEED = 0.03f;
 
 class Sphere {
 private:
@@ -35,6 +34,8 @@ public:
 
     int cCount;
     int aCount;
+
+    float ORBIT_SPEED = 0.005f;
 
     Sphere(int shader, glm::vec3 centre, float rad, int crosses, int arms, Transform * transf, GLuint texture) {
         id = shader;
