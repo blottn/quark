@@ -16,14 +16,13 @@ public:
 
     glm::mat4 compute() {
         glm::mat4 out = orbital * (translate * (rotate*(scale*glm::mat4(1.0f))));
-        /*out = out * scale;
-        out = out * rotate;
-        out = out * translate;
-        out = out * orbital;*/
-
         return out;
     }
-
+    
+    glm::mat4 computeParticle() {
+        glm::mat4 out = translate * (scale*glm::mat4(1.0f));
+        return out;
+    }
     Transform * clone() {
         Transform * clone = new Transform();
         clone->scale = this->scale;

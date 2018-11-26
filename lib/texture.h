@@ -37,7 +37,7 @@ GLuint load(std::string src, int chan) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     // load and generate the texture
     int width, height, nrChannels;
-    unsigned char * data = stbi_load(src.c_str(), &width, &height, &nrChannels, STBI_rgb_alpha);
+    unsigned char * data = stbi_load(src.c_str(), &width, &height, &nrChannels, chan);
     if (data)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);

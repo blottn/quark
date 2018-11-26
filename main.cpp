@@ -161,8 +161,8 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgramID);
 
-    //sky->draw(camera->getView(), projection);
-    //sun->draw(mat4(1.0f),camera->getView(), projection);
+    sky->draw(camera->getView(), projection);
+    sun->draw(mat4(1.0f),camera->getView(), projection);
     sunParticles->draw(camera->getView(), projection);
     //glutWarpPointer(middleX, middleY);
 	glutSwapBuffers();
@@ -171,6 +171,7 @@ void display() {
 // periodic function for changing translation amts etc
 void updateScene() {
     sun->updateChildren();
+    sunParticles->update();
 	// Draw the next frame
 	glutPostRedisplay();
 }
@@ -222,8 +223,8 @@ void initPlanets() {
 void initParticles() {
 
     GLuint particleShader = CompileShaders("shaders/particle_vert.shader", "shaders/particle_frag.shader");
-    GLuint partTex = load("models/fire.png",4);
-    sunParticles = new ParticleEffect(vec3(0,0,0), particleShader, partTex);
+    sunParticles = new ParticleEffect(vec3(0,0,0), particleShader, 5);  //magic numbers!
+    Transform * partTra = new Transform();
 }
 
 void init()
@@ -259,7 +260,9 @@ void init()
             glm::vec3(0,0,-1),
             glm::vec3(1,0,0),
             glm::vec3(0,1,0));
+
     initSkybox();
+
     initPlanets();
     initParticles();
 }
