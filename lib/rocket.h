@@ -77,12 +77,16 @@ public:
 
 	Transform * model;
 
-	Rocket(GLuint shader, Transform * initial) {
-		shaderID = shader;
-		model = new Transform();
+    glm::vec3 vel;
+    glm::vec3 pos;
 
+	Rocket(GLuint shader) {
+		shaderID = shader;
+        vel = vec3(0.0001,0.0001,0.0);
+        pos = vec3(0.0,1.0,7.0);
+        model = new Transform();
+        model->translate = glm::translate(model->translate, pos);
 		initData();
-		model = initial;
 	}
 
 	void initData() {
@@ -137,6 +141,11 @@ public:
 	}
 
     void update() {
+        model->rotate = glm::lookAt(pos, pos + glm::normalize(vel),glm::vec3(0,1,0));
+        model->rotate= glm::rotate(model->rotate, glm::radians(90.0f), glm::vec3(0.0f,0.0f,1.0f));
+        
+        model->translate = glm::translate(glm::mat4(1.0f),pos);
+        pos += vel;
 
     }
 };

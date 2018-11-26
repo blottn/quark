@@ -173,7 +173,7 @@ void updateScene() {
     sunParticles->update();
     rocket->update();
     if (warp)
-        camera->mPos = glm::translate(rocket->model->compute(),vec3(0,0,-1)) * vec4(0.0,0.0,0.0,1.0);
+        camera->mPos = rocket->pos + vec3(0.0,0.0,-2.0);
 	glutPostRedisplay();
 }
 
@@ -230,9 +230,7 @@ void initParticles() {
 
 void initRocket() {
     GLuint rocketShader = CompileShaders("shaders/rocket_vert.shader","shaders/rocket_frag.shader");
-    Transform * rocketTransform = new Transform();
-    rocketTransform->translate = translate(rocketTransform->translate, vec3(0,0,7));
-    rocket = new Rocket(rocketShader, rocketTransform);
+    rocket = new Rocket(rocketShader);
 }
 
 void init()

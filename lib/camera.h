@@ -33,7 +33,6 @@ public:
     }
 
     void look(float xOff, float yOff) {
-        std::cout << xOff << " " << yOff << std::endl;
         xOff *= 0.1f;
         yOff *= 0.1f;
 
