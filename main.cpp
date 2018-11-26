@@ -166,7 +166,7 @@ void display() {
 }
 
 void updateScene() {
-//    sun->updateChildren();
+    sun->updateChildren();
     sunParticles->update();
 
 	glutPostRedisplay();
@@ -224,7 +224,7 @@ void initParticles() {
 }
 
 void initRocket() {
-    GLuint rocketShader = CompileShaders("shaders/simple_vert.shader","shader/sphere_frag.shader");
+    GLuint rocketShader = CompileShaders("shaders/rocket_vert.shader","shader/sphere_frag.shader");
     //Rocket rocket = new Rocket(rocketShader,);
 }
 
@@ -329,6 +329,10 @@ int main(int argc, char** argv) {
 		fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
 		return 1;
 	}
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+
 	// Set up your objects and shaders
 	init();
 

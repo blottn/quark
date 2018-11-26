@@ -148,8 +148,8 @@ public:
                 indexes[trisPerCap*3 + aCount*2*2*3*i + j + 2] = upRight;
                 //      bottomcap      previous rows 
                 indexes[trisPerCap*3 + aCount*2*2*3*i + j + 3] = first;
-                indexes[trisPerCap*3 + aCount*2*2*3*i + j + 4] = up;
-                indexes[trisPerCap*3 + aCount*2*2*3*i + j + 5] = upRight;
+                indexes[trisPerCap*3 + aCount*2*2*3*i + j + 4] = upRight;
+                indexes[trisPerCap*3 + aCount*2*2*3*i + j + 5] = up;
             }
         }
 
