@@ -89,7 +89,7 @@ public:
         trans.z *= rad /2;
         Transform * t = new Transform();
         t->translate = glm::translate(t->translate, trans);
-        t->scale = glm::scale(t->scale, glm::vec3(0.05, 0.05, 0.05));
+        t->scale = glm::scale(t->scale, glm::vec3(0.04, 0.04, 0.04));
         if (replications->size() < 100)
             this->replications->push_back(t);
         else 
