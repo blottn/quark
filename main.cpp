@@ -152,32 +152,27 @@ GLuint CompileShaders(string vertex_file, string fragment_file)
 }
 
 void display() {
-
-	// tell GL to only draw onto a pixel if the shape is closer to the viewer
-	glEnable(GL_DEPTH_TEST); // enable depth-testing
-	glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgramID);
 
     sky->draw(camera->getView(), projection);
-    //sunParticles->draw(camera->getView(), projection);
-    sun->draw(mat4(1.0f),camera->getView(), projection);
+    sun->draw(mat4(1.0f),camera->getView(), projection, camera->mPos);
     sunParticles->draw(camera->getView(), projection);
     //glutWarpPointer(middleX, middleY);
 	glutSwapBuffers();
 }
 
-// periodic function for changing translation amts etc
 void updateScene() {
-    sun->updateChildren();
+//    sun->updateChildren();
     sunParticles->update();
-	// Draw the next frame
+
 	glutPostRedisplay();
 }
 
 void initSkybox() {
-
     GLuint skyShader = CompileShaders("shaders/sky_vert.shader","shaders/sky_frag.shader");
 
     vector<string> * sides = new vector<string>();
@@ -199,6 +194,7 @@ void initPlanets() {
 
     GLuint sunTex = load("models/sun.jpg",0);
     GLuint earthTex = load("models/earth.jpg",0);
+    GLuint moonTex = load("models/earth.jpg",0);
 
     Transform * sphereTransform = new Transform();
     sphereTransform->scale = scale(sphereTransform->scale, vec3(0.2,0.2,0.2));
@@ -214,7 +210,7 @@ void initPlanets() {
     moonTransform->translate = translate(moonTransform->translate, vec3(10,0,0));
 
     Sphere * earth = new Sphere(sphereShader, vec3(0,0,0), 10, SPHERE_RES, SPHERE_RES, planetTransform, earthTex, 0);
-    Sphere * moon = new Sphere(sphereShader, vec3(0,0,0), 10, SPHERE_RES, SPHERE_RES, planetTransform, earthTex, 0);
+    Sphere * moon = new Sphere(sphereShader, vec3(0,0,0), 10, SPHERE_RES, SPHERE_RES, planetTransform, moonTex, 0);
     moon->ORBIT_SPEED = 0.04f;
     sun->addChild(*earth);
     earth->addChild(*moon);

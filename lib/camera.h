@@ -3,7 +3,7 @@ using namespace glm;
 // Class to describe camera position, movement
 class Camera {
 
-private:
+public:
     vec3 mPos;
     vec3 mFront;
     vec3 mRight;
@@ -12,7 +12,6 @@ private:
     float pitch;
     float yaw;
 
-public:
     Camera(vec3 p, vec3 f, vec3 r, vec3 u) {
         mPos = p;
         mFront = f;

@@ -10,8 +10,6 @@ uniform mat4 view;
 uniform mat4 proj;
 uniform mat4 model;
 
-uniform int bright;
-
 void main(){
   // Convert position to clip coordinates and pass along
   coord = normalize(vertex_position);

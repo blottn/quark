@@ -190,7 +190,7 @@ public:
         glUseProgram(id);
     }
 
-    void draw(glm::mat4 model, glm::mat4 view, glm::mat4 projection) {
+    void draw(glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::vec3 cameraPos) {
         bindVAO();
         useShader();
         glDepthFunc(GL_LESS);
@@ -199,11 +199,13 @@ public:
         int view_mat_location = glGetUniformLocation(id, "view");
         int proj_mat_location = glGetUniformLocation(id, "proj");
         int bright_int_location = glGetUniformLocation(id, "bright");
+        int camera_location = glGetUniformLocation(id, "cameraPos");
 
         // update uniforms & draw
         glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, glm::value_ptr(projection)    );
         glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(model_mat_location, 1, GL_FALSE, glm::value_ptr(model * transform->compute()));
+        glUniform3f(camera_location, cameraPos.x, cameraPos.y, cameraPos.z);
         glUniform1i(bright_int_location, isSource);
 
         glBindTexture(GL_TEXTURE_2D, tex);
@@ -211,7 +213,7 @@ public:
         glDrawElements(GL_TRIANGLES, 3*vCount, GL_UNSIGNED_INT, 0);
 
         for (Sphere child : (*subs) ) {
-            child.draw(model * transform->compute(), view, projection);
+            child.draw(model * transform->compute(), view, projection, cameraPos);
         }
     }
     void updateChildren() {

@@ -3,11 +3,9 @@ out vec4 fragColor;
 
 uniform sampler2D tex;
 
-//uniform mat4 model;
-//uniform mat4 proj;
-//uniform mat4 view;
-
+uniform vec3 cameraPos;
 uniform int bright;
+uniform int shininess;
 
 in vec3 coord;
 in vec3 norm;
@@ -21,16 +19,24 @@ vec3 Ld = vec3 (1.0, 1.0, 1.0); // Light source intensity
 void main(){
 
     vec3 LightIntensity = vec3(1.0,1.0,1.0);
-    vec3 ambient = vec3(0.1,0.1,0.1);
+    if (bright == 0) {
+        vec3 ambient = vec3(0.1,0.1,0.1);
     
-    vec3 lightDir = normalize(lPos-FragPos);
-    float diffusion = max(dot(normalize(norm), lightDir), 0.0);
-    vec3 diffuse = diffusion * lColor;
-    LightIntensity = ambient + diffuse;
-    
+        vec3 lightDir = normalize(lPos-FragPos);
+        float diffusion = max(dot(normalize(norm), lightDir), 0.0);
+        vec3 diffuse = diffusion * lColor;
+
+        float power = 1.0;
+        vec3 cameraDir = normalize(cameraPos-FragPos);
+        vec3 ref = reflect(-lightDir, normalize(norm));
+
+        float specularity = pow(max(dot(cameraDir, ref), 0.0), 64);
+        vec3 spec = power * specularity * lColor;
+        LightIntensity = ambient + diffuse + spec;
+    }
     vec2 texCoord = vec2(coord.x, coord.y);
     vec4 texture = texture(tex, texCoord);
-
+    
 
 	fragColor = texture * vec4(LightIntensity, 1.0);
 }
