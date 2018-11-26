@@ -52,6 +52,9 @@ Rocket * rocket;
 
 Camera * camera;
 
+// dont immeadiately lock in the mouse
+int warp = 0;
+
 //TODO remove in favour of camera
 Transform * view = new Transform();
 glm::mat4 projection = glm::mat4(1.0f);
@@ -62,10 +65,9 @@ Plane * plane;
 // Shader Functions
 char* readShaderSource(const char* shaderFile) {
 	FILE* fp;
+    int errorno;
 	fp = fopen(shaderFile, "rb");
-
-	if (fp == NULL) { return NULL; }
-
+	if (fp == NULL) {return NULL; }
 	fseek(fp, 0L, SEEK_END);
 	long size = ftell(fp);
 
@@ -92,7 +94,6 @@ static void AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum Shad
 		exit(1);
 	}
 	const char* pShaderSource = readShaderSource(pShaderText);
-
 	// Bind the source code to the shader, this happens before compilation
 	glShaderSource(ShaderObj, 1, (const GLchar**)&pShaderSource, NULL);
 	// compile the shader and check for errors
@@ -118,8 +119,9 @@ GLuint CompileShaders(string vertex_file, string fragment_file)
 {
 	//Start the process of setting up our shaders by creating a program ID
 	//Note: we will link all the shaders together into this ID
+    
 	shaderProgramID = glCreateProgram();
-	if (shaderProgramID == 0) {
+    if (shaderProgramID == 0) {
 		std::cerr << "Error creating shader program..." << std::endl;
 		std::cerr << "Press enter/return to exit..." << std::endl;
 		std::cin.get();
@@ -129,7 +131,6 @@ GLuint CompileShaders(string vertex_file, string fragment_file)
 	// Create two shader objects, one for the vertex, and one for the fragment shader
 	AddShader(shaderProgramID, vertex_file.c_str(), GL_VERTEX_SHADER);
 	AddShader(shaderProgramID, fragment_file.c_str(), GL_FRAGMENT_SHADER);
-
 	GLint Success = 0;
 	GLchar ErrorLog[1024] = { '\0' };
 	// After compiling all shader objects and attaching them to the program, we can finally link it
@@ -160,15 +161,17 @@ void display() {
 
     sky->draw(camera->getView(), projection);
     sun->draw(mat4(1.0f),camera->getView(), projection, camera->mPos);
+    rocket->draw(mat4(1.0f), camera->getView(), projection);
     sunParticles->draw(camera->getView(), projection);
-    //glutWarpPointer(middleX, middleY);
+    if (warp)
+        glutWarpPointer(middleX, middleY);
 	glutSwapBuffers();
 }
 
 void updateScene() {
     sun->updateChildren();
     sunParticles->update();
-
+    //rocket->update();
 	glutPostRedisplay();
 }
 
@@ -224,8 +227,10 @@ void initParticles() {
 }
 
 void initRocket() {
-    GLuint rocketShader = CompileShaders("shaders/rocket_vert.shader","shader/sphere_frag.shader");
-    //Rocket rocket = new Rocket(rocketShader,);
+    GLuint rocketShader = CompileShaders("shaders/rocket_vert.shader","shaders/rocket_frag.shader");
+    Transform * rocketTransform = new Transform();
+    rocketTransform->translate = translate(rocketTransform->translate, vec3(0,0,7));
+    rocket = new Rocket(rocketShader, rocketTransform);
 }
 
 void init()
@@ -266,6 +271,7 @@ void init()
 
     initPlanets();
     initParticles();
+    initRocket();
 }
 
 // Placeholder code for the keypress
@@ -290,6 +296,9 @@ void keypress(unsigned char key, int x, int y) {
     case 's':
         camera->move(vec3(0,0,-0.1));
         break;
+    case ' ':
+        warp = 1;
+        break;
     case 'y':
         camera->look(-lookspeed,0);
         break;
@@ -303,7 +312,8 @@ void keypress(unsigned char key, int x, int y) {
 }
 
 void mouseMove(int x, int y) {
-    //camera->look(x - middleX, y-middleY);
+    if (warp)
+        camera->look(x - middleX, y-middleY);
 }
 
 int main(int argc, char** argv) {
@@ -332,6 +342,8 @@ int main(int argc, char** argv) {
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
 
 	// Set up your objects and shaders
 	init();
