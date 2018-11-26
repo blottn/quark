@@ -25,10 +25,8 @@
 #include "lib/texture.h"
 #include "lib/camera.h"
 #include "lib/particle.h"
+#include "lib/rocket.h"
 
-/*----------------------------------------------------------------------------
-MESH TO LOAD
-----------------------------------------------------------------------------*/
 #define BANANA_MESH_NAME "models/banana.dae"
 #define MONKEY_MESH_NAME "models/monkeyhead_smooth.dae"
 
@@ -50,6 +48,7 @@ GLuint shaderProgramID;
 Ent * root;
 SkyBox * sky;
 ParticleEffect * sunParticles;
+Rocket * rocket;
 
 Camera * camera;
 
@@ -228,6 +227,11 @@ void initParticles() {
     Transform * partTra = new Transform();
 }
 
+void initRocket() {
+    GLuint rocketShader = CompileShaders("shaders/simple_vert.shader","shader/sphere_frag.shader");
+    //Rocket rocket = new Rocket(rocketShader,);
+}
+
 void init()
 {
 
@@ -309,7 +313,7 @@ void mouseMove(int x, int y) {
 int main(int argc, char** argv) {
 	// Set up the window
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_3_2_CORE_PROFILE | GLUT_DOUBLE | GLUT_RGB);
+	glutInitDisplayMode(GLUT_3_2_CORE_PROFILE | GLUT_DEPTH |  GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(width, height);
 	glutCreateWindow("Quark");
 
