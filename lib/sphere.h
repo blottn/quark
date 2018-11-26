@@ -31,17 +31,19 @@ public:
     float r;
     
     Transform * transform;
-
+    
+    int isSource;
     int cCount;
     int aCount;
 
     float ORBIT_SPEED = 0.005f;
 
-    Sphere(int shader, glm::vec3 centre, float rad, int crosses, int arms, Transform * transf, GLuint texture) {
+    Sphere(int shader, glm::vec3 centre, float rad, int crosses, int arms, Transform * transf, GLuint texture, int source) {
         id = shader;
         c = centre;
         r = rad;
         tex = texture;
+        isSource = source;
 
         subs = new vector<Sphere>();
 
@@ -196,11 +198,13 @@ public:
         int model_mat_location = glGetUniformLocation(id, "model");
         int view_mat_location = glGetUniformLocation(id, "view");
         int proj_mat_location = glGetUniformLocation(id, "proj");
+        int bright_int_location = glGetUniformLocation(id, "bright");
 
         // update uniforms & draw
         glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, glm::value_ptr(projection)    );
         glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(model_mat_location, 1, GL_FALSE, glm::value_ptr(model * transform->compute()));
+        glUniform1i(bright_int_location, isSource);
 
         glBindTexture(GL_TEXTURE_2D, tex);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);

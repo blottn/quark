@@ -7,6 +7,6 @@ in vec3 LightIntensity;
 uniform sampler2D tex;
 
 void main(){
-    vec4 textureVal = vec4(0.0,0.0,1,1.0);
+    vec4 textureVal = vec4(0.8,0.6,0,0.6);
 	fragColor = textureVal;// * vec4 (LightIntensity, 1.0);
 }

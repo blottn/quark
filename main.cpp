@@ -162,6 +162,7 @@ void display() {
 	glUseProgram(shaderProgramID);
 
     sky->draw(camera->getView(), projection);
+    //sunParticles->draw(camera->getView(), projection);
     sun->draw(mat4(1.0f),camera->getView(), projection);
     sunParticles->draw(camera->getView(), projection);
     //glutWarpPointer(middleX, middleY);
@@ -202,7 +203,7 @@ void initPlanets() {
 
     Transform * sphereTransform = new Transform();
     sphereTransform->scale = scale(sphereTransform->scale, vec3(0.2,0.2,0.2));
-    sun = new Sphere(sphereShader, vec3(0,0,0),10, SPHERE_RES, SPHERE_RES, sphereTransform, sunTex);
+    sun = new Sphere(sphereShader, vec3(0,0,0),10, SPHERE_RES, SPHERE_RES, sphereTransform, sunTex, 1);
 
 
     Transform * planetTransform = new Transform();
@@ -213,8 +214,8 @@ void initPlanets() {
     moonTransform->scale = scale(moonTransform->scale, vec3(0.5,0.5,0.5));
     moonTransform->translate = translate(moonTransform->translate, vec3(10,0,0));
 
-    Sphere * earth = new Sphere(sphereShader, vec3(0,0,0), 10, SPHERE_RES, SPHERE_RES, planetTransform, earthTex);
-    Sphere * moon = new Sphere(sphereShader, vec3(0,0,0), 10, SPHERE_RES, SPHERE_RES, planetTransform, earthTex);
+    Sphere * earth = new Sphere(sphereShader, vec3(0,0,0), 10, SPHERE_RES, SPHERE_RES, planetTransform, earthTex, 0);
+    Sphere * moon = new Sphere(sphereShader, vec3(0,0,0), 10, SPHERE_RES, SPHERE_RES, planetTransform, earthTex, 0);
     moon->ORBIT_SPEED = 0.04f;
     sun->addChild(*earth);
     earth->addChild(*moon);

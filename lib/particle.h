@@ -6,7 +6,7 @@ public:
     int id;
     std::vector<Transform *> * replications;
     glm::vec3 emitter;
-    int rad ;
+    int rad;
 
     float verts[9] = {
         1,-1,0,
@@ -79,6 +79,20 @@ public:
     }
 
     void update() {
-        std::rand();
+        double randx = std::rand() * 2 - 1;
+        double randy = std::rand() * 2 - 1;
+        double randz = std::rand() * 2 - 1;
+
+        glm::vec3 trans = glm::normalize(glm::vec3(randx, randy, randz));
+        trans.x *= rad /2;
+        trans.y *= rad /2;
+        trans.z *= rad /2;
+        Transform * t = new Transform();
+        t->translate = glm::translate(t->translate, trans);
+        t->scale = glm::scale(t->scale, glm::vec3(0.05, 0.05, 0.05));
+        if (replications->size() < 100)
+            this->replications->push_back(t);
+        else 
+            replications->erase(replications->begin());
     }
 };
