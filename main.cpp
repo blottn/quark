@@ -49,7 +49,7 @@ GLuint shaderProgramID;
 Ent * root;
 SkyBox * sky;
 ParticleEffect * sunParticles;
-Rocket * rocket;
+PhysicsSphere * physicsSphere;
 
 Camera * camera;
 
@@ -162,7 +162,7 @@ void display() {
 
     sky->draw(camera->getView(), projection);
     sun->draw(mat4(1.0f),camera->getView(), projection, camera->mPos);
-    rocket->draw(mat4(1.0f), camera->getView(), projection, camera->mPos);
+    physicsSphere->draw(mat4(1.0f), camera->getView(), projection, camera->mPos);
     sunParticles->draw(camera->getView(), projection);
     if (warp)
         glutWarpPointer(middleX, middleY);
@@ -172,7 +172,7 @@ void display() {
 
 
 vec3 getPull(Sphere * obj) {
-    glm::vec3 r_dir = glm::vec3(obj->transform->translate * vec4(0.0f,0.0f,0.0f,1.0f) - vec4(rocket->pos, 1.0f));
+    glm::vec3 r_dir = glm::vec3(obj->transform->translate * vec4(0.0f,0.0f,0.0f,1.0f) - vec4(physicsSphere->pos, 1.0f));
     float r = glm::length(r_dir);
     r = r * r;  //r^2
     float mag = ((G * obj->mass * 1.0f) / r);
@@ -186,9 +186,9 @@ void updateScene() {
 
 
     vec3 accel = getPull(sun);
-    rocket->update(accel);
+    physicsSphere->update(accel);
     if (warp)
-        camera->mPos = rocket->pos + vec3(0.0,0.0,-0.20);
+        camera->mPos = physicsSphere->pos + vec3(0.0,0.0,-0.20);
 	glutPostRedisplay();
 }
 
@@ -242,10 +242,10 @@ void initParticles() {
     Transform * partTra = new Transform();
 }
 
-void initRocket() {
-    GLuint rocketShader = CompileShaders("shaders/sphere_vert.shader","shaders/sphere_frag.shader");
+void initPhysics() {
+    GLuint physicsSphereShader = CompileShaders("shaders/sphere_vert.shader","shaders/sphere_frag.shader");
     GLuint rockTex = load("models/rock.jpg",0);
-    rocket = new Rocket(rocketShader, SPHERE_RES, SPHERE_RES, rockTex);
+    physicsSphere = new PhysicsSphere(physicsSphereShader, SPHERE_RES, SPHERE_RES, rockTex);
 }
 
 void init()
@@ -286,7 +286,7 @@ void init()
 
     initPlanets();
     initParticles();
-    initRocket();
+    initPhysics();
 }
 
 // Placeholder code for the keypress

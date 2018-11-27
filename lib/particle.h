@@ -96,7 +96,9 @@ public:
         t->scale = glm::scale(t->scale, glm::vec3(0.04, 0.04, 0.04));
         if (replications->size() < 100)
             this->replications->push_back(t);
-        else 
+        else  {
             replications->erase(replications->begin());
+            this->replications->push_back(t);
+        }
     }
 };

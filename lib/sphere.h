@@ -229,14 +229,14 @@ public:
     }
 };
 
-class Rocket {
+class PhysicsSphere {
 public:
     glm::vec3 vel;
     glm::vec3 pos = glm::vec3(0,0,-10);
 
     Sphere * sphere;
 
-	Rocket(GLuint shader, int crosses, int arms, GLuint tex) {
+	PhysicsSphere(GLuint shader, int crosses, int arms, GLuint tex) {
         vel = glm::vec3(0.002,0,0.0);
         pos = glm::vec3(0.0,1.0,7.0);
         sphere = new Sphere(shader, glm::vec3(0,0,0), 10, crosses, arms, new Transform(), tex, 0, 1);
