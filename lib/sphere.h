@@ -125,8 +125,8 @@ public:
         //bottom
         for (int i = 0; i < aCount*2 ; i++) {
             indexes[i*3] = 0;
-            indexes[i*3 + 1] = i+1;
-            indexes[i*3 + 2] = ((i+1) % (2 * aCount)) + 1;
+            indexes[i*3 + 1] = ((i+1) % (2 * aCount)) + 1;
+            indexes[i*3 + 2] = i+1;;
         }
 
         int trisPerCap = 2*aCount;
@@ -239,6 +239,7 @@ public:
         pos = glm::vec3(0.0,1.0,7.0);
         sphere = new Sphere(shader, glm::vec3(0,0,0), 10, crosses, arms, new Transform(), tex, 0);
         sphere->transform->translate = glm::translate(sphere->transform->translate, pos);
+        sphere->transform->scale = glm::scale(sphere->transform->scale, glm::vec3(0.05,0.05,0.05));
 	}
     
     void draw(glm::mat4 parent, glm::mat4 v, glm::mat4 p, glm::vec3 c) {
