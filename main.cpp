@@ -44,9 +44,6 @@ const float G = 0.00006;  //atll do for accuracy
 const int middleX = ((float) width ) / 2.0f;
 const int middleY = ((float) height ) / 2.0f;
 
-GLuint shaderProgramID;
-
-Ent * root;
 SkyBox * sky;
 ParticleEffect * sunParticles;
 PhysicsSphere * physicsSphere;
@@ -121,7 +118,7 @@ GLuint CompileShaders(string vertex_file, string fragment_file)
 	//Start the process of setting up our shaders by creating a program ID
 	//Note: we will link all the shaders together into this ID
     
-	shaderProgramID = glCreateProgram();
+	GLuint shaderProgramID = glCreateProgram();
     if (shaderProgramID == 0) {
 		std::cerr << "Error creating shader program..." << std::endl;
 		std::cerr << "Press enter/return to exit..." << std::endl;
@@ -158,7 +155,6 @@ void display() {
 	glDepthFunc(GL_LESS);
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glUseProgram(shaderProgramID);
 
     sky->draw(camera->getView(), projection);
     sun->draw(mat4(1.0f),camera->getView(), projection, camera->mPos);
@@ -248,30 +244,7 @@ void initPhysics() {
     physicsSphere = new PhysicsSphere(physicsSphereShader, SPHERE_RES, SPHERE_RES, rockTex);
 }
 
-void init()
-{
-
-    // Set up the shaders
-	GLuint shaderProgramID = CompileShaders("shaders/simple_vert.shader","shaders/simple_frag.shader");
-
-	ModelData monkey = load_mesh(MONKEY_MESH_NAME);
-
-	Transform * right = new Transform();
-	right->translate = glm::translate(right->translate, glm::vec3(7.5f, -5.0f, 0.0f));
-	right->rotate = glm::rotate(right->rotate, glm::radians(45.0f), glm::vec3(0,0,1));
-
-	Transform * left = new Transform();
-	left->translate = glm::translate(left->translate, glm::vec3(-7.5f, -5.0f, 0.0f));
-	left->rotate = glm::rotate(left->rotate, glm::radians(-45.0f), glm::vec3(0,0,1));
-
-	// root
-	root = new Ent(monkey, shaderProgramID, new Transform());
-
-
-	Ent * sub1 = new Ent(monkey, shaderProgramID, left);
-
-	root->addChild(*sub1);
-
+void init() {
     // view and projection init
     projection = glm::perspective(glm::radians(60.0f), (float) glutGet(GLUT_WINDOW_WIDTH)/ (float) glutGet(    GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
     view->translate = glm::translate(view->translate, glm::vec3(0.0f, 0.0f, -50.0f));
