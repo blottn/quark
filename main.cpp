@@ -19,15 +19,11 @@
 #include <assimp/scene.h> // collects data
 #include <assimp/postprocess.h> // various extra operations
 
-#include "lib/data.h"
 #include "lib/ent.h"
 #include "lib/sphere.h"
 #include "lib/texture.h"
 #include "lib/camera.h"
 #include "lib/particle.h"
-
-#define BANANA_MESH_NAME "models/banana.dae"
-#define MONKEY_MESH_NAME "models/monkeyhead_smooth.dae"
 
 using namespace std;
 
@@ -58,7 +54,6 @@ Transform * view = new Transform();
 glm::mat4 projection = glm::mat4(1.0f);
 
 Sphere * sun;
-Plane * plane;
 
 // Shader Functions
 char* readShaderSource(const char* shaderFile) {
