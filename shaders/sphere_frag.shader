@@ -7,7 +7,6 @@ uniform vec3 cameraPos;
 uniform int bright;
 uniform int shininess;
 
-in vec3 coord;
 in vec3 norm;
 in vec3 FragPos;  
 in vec2 TexCoord;
@@ -35,7 +34,6 @@ void main(){
         vec3 spec = power * specularity * lColor;
         LightIntensity = ambient + diffuse + spec;
     }
-    //vec2 texCoord = vec2(coord.x, coord.y);
     vec4 texture = texture(tex, TexCoord);
     
 

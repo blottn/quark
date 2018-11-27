@@ -61,10 +61,12 @@ public:
     }
 
     void draw(glm::mat4 view, glm::mat4 proj) {
+        
         glBindVertexArray(vao);
+        glDisable(GL_CULL_FACE);
         glDepthFunc(GL_LESS);
         glUseProgram(id);
-
+       
 	    int matrix_location = glGetUniformLocation(id, "model");
 		int view_mat_location = glGetUniformLocation(id, "view");
 		int proj_mat_location = glGetUniformLocation(id, "proj");
@@ -76,6 +78,8 @@ public:
 		    glUniformMatrix4fv(matrix_location, 1, GL_FALSE, value_ptr(repl->computeParticle()));
             glDrawArrays(GL_TRIANGLES,0,sizeof(verts));
         }
+
+        glEnable(GL_CULL_FACE);
     }
 
     void update() {
