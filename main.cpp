@@ -19,7 +19,7 @@
 #include <assimp/scene.h> // collects data
 #include <assimp/postprocess.h> // various extra operations
 
-#include "lib/ent.h"
+#include "lib/sky.h"
 #include "lib/sphere.h"
 #include "lib/texture.h"
 #include "lib/camera.h"
