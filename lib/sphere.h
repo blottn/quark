@@ -226,3 +226,27 @@ public:
         updateChildren();
     }
 };
+
+class Rocket {
+public:
+    glm::vec3 vel;
+    glm::vec3 pos = glm::vec3(0,0,-10);
+
+    Sphere * sphere;
+
+	Rocket(GLuint shader, int crosses, int arms, GLuint tex) {
+        vel = glm::vec3(0.0001,0.0001,0.0);
+        pos = glm::vec3(0.0,1.0,7.0);
+        sphere = new Sphere(shader, glm::vec3(0,0,0), 10, crosses, arms, new Transform(), tex, 0);
+        sphere->transform->translate = glm::translate(sphere->transform->translate, pos);
+	}
+    
+    void draw(glm::mat4 parent, glm::mat4 v, glm::mat4 p, glm::vec3 c) {
+        sphere->draw(parent, v, p, c);
+    }
+
+    void update() {
+
+    }
+};
+

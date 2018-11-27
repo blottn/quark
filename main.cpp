@@ -25,7 +25,6 @@
 #include "lib/texture.h"
 #include "lib/camera.h"
 #include "lib/particle.h"
-#include "lib/rocket.h"
 
 #define BANANA_MESH_NAME "models/banana.dae"
 #define MONKEY_MESH_NAME "models/monkeyhead_smooth.dae"
@@ -229,8 +228,9 @@ void initParticles() {
 }
 
 void initRocket() {
-    GLuint rocketShader = CompileShaders("shaders/rocket_vert.shader","shaders/rocket_frag.shader");
-    rocket = new Rocket(rocketShader);
+    GLuint rocketShader = CompileShaders("shaders/sphere_vert.shader","shaders/sphere_frag.shader");
+    GLuint rockTex = load("models/rock.jpg",0);
+    rocket = new Rocket(rocketShader, SPHERE_RES, SPHERE_RES, rockTex);
 }
 
 void init()
