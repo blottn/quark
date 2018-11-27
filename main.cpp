@@ -323,6 +323,12 @@ void keypress(unsigned char key, int x, int y) {
     case 'u':
         camera->look(lookspeed,0);
         break;
+    case 'f':
+        camera->look(0,-lookspeed);
+        break;
+    case 'v':
+        camera->look(0,lookspeed);
+        break;
     case 'q':   //exit
         exit(0);
         break;
