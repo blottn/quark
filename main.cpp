@@ -39,7 +39,7 @@ const int height = 800;
 
 const int SPHERE_RES = 100;
 
-const float G = 0.00000000006;  //atll do for accuracy
+const float G = 0.00006;  //atll do for accuracy
 
 const int middleX = ((float) width ) / 2.0f;
 const int middleY = ((float) height ) / 2.0f;
@@ -172,7 +172,12 @@ void display() {
 
 
 vec3 getPull(Sphere * obj) {
-    return vec3(0.0f,0.0f,0.0f) * G;
+    glm::vec3 r_dir = glm::vec3(obj->transform->translate * vec4(0.0f,0.0f,0.0f,1.0f) - vec4(rocket->pos, 1.0f));
+    float r = glm::length(r_dir);
+    r = r * r;  //r^2
+    float mag = ((G * obj->mass * 1.0f) / r);
+    std::cout << "mag:" << mag << std::endl;
+    return glm::normalize(r_dir) * ((G * obj->mass * 1.0f) / r);
 }
 
 
@@ -181,14 +186,9 @@ void updateScene() {
     sunParticles->update();
 
 
-    // calculate pull
-    
-    
-
-    vec3 accel = vec3(0.0f,0.0f,0.0f);
-
-
-    rocket->update(vec3(0,0.000001,0));
+    vec3 accel = getPull(sun);
+    std::cout << glm::to_string(accel) << std::endl;
+    rocket->update(accel);
     if (warp)
         camera->mPos = rocket->pos + vec3(0.0,0.0,-0.20);
 	glutPostRedisplay();
@@ -221,7 +221,6 @@ void initPlanets() {
     Transform * sphereTransform = new Transform();
     sphereTransform->scale = scale(sphereTransform->scale, vec3(0.2,0.2,0.2));
     sun = new Sphere(sphereShader, vec3(0,0,0),10, SPHERE_RES, SPHERE_RES, sphereTransform, sunTex, 1, 1);
-
 
     Transform * planetTransform = new Transform();
     planetTransform->scale = scale(planetTransform->scale, vec3(0.5,0.5,0.5));
