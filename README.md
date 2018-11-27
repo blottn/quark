@@ -2,7 +2,8 @@
 
 Final assignment for computer graphics
 
-
+## Author
+Created by Nicholas Blott
 
 ## Features 
 - Phong illumination
@@ -13,3 +14,8 @@ Final assignment for computer graphics
 - physics
 - UV mapping
 - generate sphere mesh
+
+## Install/ run
+Made for OSX, going to be completely different on any other OS :/
+
+Build and run with `make`
