@@ -176,7 +176,6 @@ vec3 getPull(Sphere * obj) {
     float r = glm::length(r_dir);
     r = r * r;  //r^2
     float mag = ((G * obj->mass * 1.0f) / r);
-    std::cout << "mag:" << mag << std::endl;
     return glm::normalize(r_dir) * ((G * obj->mass * 1.0f) / r);
 }
 
@@ -187,7 +186,6 @@ void updateScene() {
 
 
     vec3 accel = getPull(sun);
-    std::cout << glm::to_string(accel) << std::endl;
     rocket->update(accel);
     if (warp)
         camera->mPos = rocket->pos + vec3(0.0,0.0,-0.20);
