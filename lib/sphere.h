@@ -19,6 +19,8 @@ private:
 
     float orbitDeg = 0;
 
+    float mass; // for gravity
+
     float * verts;
     int vCount;
    
@@ -38,7 +40,7 @@ public:
 
     float ORBIT_SPEED = 0.00001f;
 
-    Sphere(int shader, glm::vec3 centre, float rad, int crosses, int arms, Transform * transf, GLuint texture, int source) {
+    Sphere(int shader, glm::vec3 centre, float rad, int crosses, int arms, Transform * transf, GLuint texture, int source, float mass) {
         id = shader;
         c = centre;
         r = rad;
@@ -237,17 +239,19 @@ public:
 	Rocket(GLuint shader, int crosses, int arms, GLuint tex) {
         vel = glm::vec3(0.0001,0.0001,0.0);
         pos = glm::vec3(0.0,1.0,7.0);
-        sphere = new Sphere(shader, glm::vec3(0,0,0), 10, crosses, arms, new Transform(), tex, 0);
+        sphere = new Sphere(shader, glm::vec3(0,0,0), 10, crosses, arms, new Transform(), tex, 0, 1);
         sphere->transform->translate = glm::translate(sphere->transform->translate, pos);
-        sphere->transform->scale = glm::scale(sphere->transform->scale, glm::vec3(0.05,0.05,0.05));
+        sphere->transform->scale = glm::scale(sphere->transform->scale, glm::vec3(0.005,0.005,0.005));
 	}
     
     void draw(glm::mat4 parent, glm::mat4 v, glm::mat4 p, glm::vec3 c) {
         sphere->draw(parent, v, p, c);
     }
 
-    void update() {
-
+    void update(glm::vec3 a) {
+        vel =  vel + a;
+        pos = pos + vel;
+        sphere->transform->translate = glm::translate(glm::mat4(1.0f), pos);
     }
 };
 

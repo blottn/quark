@@ -39,6 +39,8 @@ const int height = 800;
 
 const int SPHERE_RES = 100;
 
+const float G = 0.00000000006;  //atll do for accuracy
+
 const int middleX = ((float) width ) / 2.0f;
 const int middleY = ((float) height ) / 2.0f;
 
@@ -167,12 +169,28 @@ void display() {
 	glutSwapBuffers();
 }
 
+
+
+vec3 getPull(Sphere * obj) {
+    return vec3(0.0f,0.0f,0.0f) * G;
+}
+
+
 void updateScene() {
     sun->updateChildren();
     sunParticles->update();
-    rocket->update();
+
+
+    // calculate pull
+    
+    
+
+    vec3 accel = vec3(0.0f,0.0f,0.0f);
+
+
+    rocket->update(vec3(0,0.000001,0));
     if (warp)
-        camera->mPos = rocket->pos + vec3(0.0,0.0,-2.0);
+        camera->mPos = rocket->pos + vec3(0.0,0.0,-0.20);
 	glutPostRedisplay();
 }
 
@@ -202,7 +220,7 @@ void initPlanets() {
 
     Transform * sphereTransform = new Transform();
     sphereTransform->scale = scale(sphereTransform->scale, vec3(0.2,0.2,0.2));
-    sun = new Sphere(sphereShader, vec3(0,0,0),10, SPHERE_RES, SPHERE_RES, sphereTransform, sunTex, 1);
+    sun = new Sphere(sphereShader, vec3(0,0,0),10, SPHERE_RES, SPHERE_RES, sphereTransform, sunTex, 1, 1);
 
 
     Transform * planetTransform = new Transform();
@@ -213,8 +231,8 @@ void initPlanets() {
     moonTransform->scale = scale(moonTransform->scale, vec3(0.5,0.5,0.5));
     moonTransform->translate = translate(moonTransform->translate, vec3(10,0,0));
 
-    Sphere * earth = new Sphere(sphereShader, vec3(0,0,0), 10, SPHERE_RES, SPHERE_RES, planetTransform, earthTex, 0);
-    Sphere * moon = new Sphere(sphereShader, vec3(0,0,0), 10, SPHERE_RES, SPHERE_RES, planetTransform, moonTex, 0);
+    Sphere * earth = new Sphere(sphereShader, vec3(0,0,0), 10, SPHERE_RES, SPHERE_RES, planetTransform, earthTex, 0, 0.5);
+    Sphere * moon = new Sphere(sphereShader, vec3(0,0,0), 10, SPHERE_RES, SPHERE_RES, planetTransform, moonTex, 0, 0.02);
     moon->ORBIT_SPEED = 0.04f;
     sun->addChild(*earth);
     earth->addChild(*moon);
